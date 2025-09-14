@@ -3,10 +3,11 @@ Main Flask application entry point with multi-tenant configuration.
 """
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
-from flask_mail import Mail
 from flask_migrate import Migrate
-from config import Config
+from flask_mail import Mail
+from flask_login import LoginManager
+from config import config
+from load_env import load_environment
 
 # Initialize extensions
 db = SQLAlchemy()
@@ -14,10 +15,13 @@ login_manager = LoginManager()
 mail = Mail()
 migrate = Migrate()
 
-def create_app(config_class=Config):
+def create_app(config_name='development'):
     """Application factory pattern for Flask app creation."""
+    # Load environment variables first
+    load_environment()
+    
     app = Flask(__name__)
-    app.config.from_object(config_class)
+    app.config.from_object(config[config_name])
     
     # Initialize extensions with app
     db.init_app(app)
@@ -50,5 +54,7 @@ def create_app(config_class=Config):
     return app
 
 if __name__ == '__main__':
-    app = create_app()
+    import os
+    config_name = os.environ.get('FLASK_ENV', 'development')
+    app = create_app(config_name)
     app.run(debug=True)
