@@ -1,5 +1,5 @@
 {
-  "name": "hockey-pickup-frontend",
+  "name": "hockey-pickup-front",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -30,7 +30,12 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint src --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css,md}\"",
+    "type-check": "tsc --noEmit"
   },
   "eslintConfig": {
     "extends": [

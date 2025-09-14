@@ -81,8 +81,8 @@ Based on the PRD analysis, this is a greenfield project requiring full-stack dev
   - [x] 1.2 Set up PostgreSQL database with multi-tenant schema design
   - [x] 1.3 Create React frontend project with TypeScript support
   - [x] 1.4 Configure development environment with Docker Compose
-  - [ ] 1.5 Set up version control with proper .gitignore files
-  - [ ] 1.6 Create environment configuration files (.env templates)
+  - [x] 1.5 Set up version control with proper .gitignore files
+  - [x] 1.6 Create environment configuration files (.env templates)
   - [ ] 1.7 Set up basic CI/CD pipeline structure
 
 - [ ] 2.0 Multi-Tenant Architecture and Authentication System
