@@ -3,8 +3,11 @@ Game statistics and attendance tracking models.
 """
 from datetime import datetime
 from app import db
+from utils.base_model import TenantMixin
+from utils.tenant_isolation import enforce_tenant_isolation
 
-class GameStatistic(db.Model):
+@enforce_tenant_isolation
+class GameStatistic(TenantMixin, db.Model):
     """Game statistics model for tracking goals, assists, penalties."""
     
     __tablename__ = 'game_statistics'
@@ -19,8 +22,7 @@ class GameStatistic(db.Model):
     notes = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     
-    # Multi-tenant foreign keys
-    tenant_id = db.Column(db.Integer, db.ForeignKey('tenants.id'), nullable=False, index=True)
+    # tenant_id is inherited from TenantMixin
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False, index=True)
     player_id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False, index=True)
     
@@ -49,7 +51,8 @@ class GameStatistic(db.Model):
             'goal_id': self.goal_id
         }
 
-class PlayerStatistic(db.Model):
+@enforce_tenant_isolation
+class PlayerStatistic(TenantMixin, db.Model):
     """Aggregated player statistics."""
     
     __tablename__ = 'player_statistics'
@@ -71,8 +74,7 @@ class PlayerStatistic(db.Model):
     season_year = db.Column(db.Integer, nullable=True)  # for seasonal stats
     last_updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     
-    # Multi-tenant foreign keys
-    tenant_id = db.Column(db.Integer, db.ForeignKey('tenants.id'), nullable=False, index=True)
+    # tenant_id is inherited from TenantMixin
     player_id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False, index=True)
     
     # Unique constraint for player per season per tenant

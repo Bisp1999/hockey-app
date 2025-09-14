@@ -2,25 +2,33 @@
 
 import os
 from datetime import timedelta
+from config import Config
 
-class DevelopmentConfig:
-    """Development configuration settings"""
-    
-    # Flask settings
+class DevelopmentConfig(Config):
+    """Development-specific configuration overrides."""
     DEBUG = True
-    TESTING = False
-    
-    # Database
     SQLALCHEMY_ECHO = True
-    SQLALCHEMY_TRACK_MODIFICATIONS = True
     
-    # Security (relaxed for development)
-    WTF_CSRF_ENABLED = True
+    # Override database URI for development
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///hockey_dev.db'
+    
+    # Relaxed security for development
     SESSION_COOKIE_SECURE = False
+    WTF_CSRF_ENABLED = False  # Disable for API testing
     
-    # Email (MailHog)
-    MAIL_SUPPRESS_SEND = False
-    MAIL_DEBUG = True
+    # CORS for frontend development
+    CORS_ORIGINS = [
+        'http://localhost:3000',
+        'http://127.0.0.1:3000'
+    ]
+    
+    # Development email settings (MailHog)
+    MAIL_SERVER = 'localhost'
+    MAIL_PORT = 1025
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = False
+    MAIL_USERNAME = None
+    MAIL_PASSWORD = None
     
     # Logging
     LOG_LEVEL = 'DEBUG'

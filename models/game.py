@@ -3,8 +3,11 @@ Game scheduling and management models.
 """
 from datetime import datetime
 from app import db
+from utils.base_model import TenantMixin
+from utils.tenant_isolation import enforce_tenant_isolation
 
-class Game(db.Model):
+@enforce_tenant_isolation
+class Game(TenantMixin, db.Model):
     """Game model for scheduling pickup games."""
     
     __tablename__ = 'games'
@@ -35,8 +38,7 @@ class Game(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     
-    # Multi-tenant foreign key
-    tenant_id = db.Column(db.Integer, db.ForeignKey('tenants.id'), nullable=False, index=True)
+    # tenant_id is inherited from TenantMixin
     
     # Relationships
     invitations = db.relationship('Invitation', backref='game', lazy=True, cascade='all, delete-orphan')

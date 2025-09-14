@@ -5,7 +5,7 @@ from .testing import TestingConfig
 from .production import ProductionConfig
 
 # Configuration mapping
-config_map = {
+config = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
     'production': ProductionConfig
@@ -13,4 +13,4 @@ config_map = {
 
 def get_config(env_name='development'):
     """Get configuration class based on environment name"""
-    return config_map.get(env_name, DevelopmentConfig)
+    return config.get(env_name, DevelopmentConfig)

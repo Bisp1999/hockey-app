@@ -5,9 +5,12 @@ from datetime import datetime, timedelta
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
+from utils.base_model import TenantMixin
+from utils.tenant_isolation import enforce_tenant_isolation
 import secrets
 
-class User(UserMixin, db.Model):
+@enforce_tenant_isolation
+class User(UserMixin, TenantMixin, db.Model):
     """User model with multi-tenant support."""
     
     __tablename__ = 'users'

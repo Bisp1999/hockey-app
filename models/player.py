@@ -3,8 +3,11 @@ Player model with positions, types, and photo upload.
 """
 from datetime import datetime
 from app import db
+from utils.base_model import TenantMixin
+from utils.tenant_isolation import enforce_tenant_isolation
 
-class Player(db.Model):
+@enforce_tenant_isolation
+class Player(TenantMixin, db.Model):
     """Player model with multi-tenant support."""
     
     __tablename__ = 'players'
@@ -21,8 +24,7 @@ class Player(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     
-    # Multi-tenant foreign key
-    tenant_id = db.Column(db.Integer, db.ForeignKey('tenants.id'), nullable=False, index=True)
+    # tenant_id is inherited from TenantMixin
     
     # Unique constraint on email within tenant
     __table_args__ = (db.UniqueConstraint('email', 'tenant_id', name='unique_player_email_per_tenant'),)

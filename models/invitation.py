@@ -3,8 +3,11 @@ Invitation and availability response models.
 """
 from datetime import datetime
 from app import db
+from utils.base_model import TenantMixin
+from utils.tenant_isolation import enforce_tenant_isolation
 
-class Invitation(db.Model):
+@enforce_tenant_isolation
+class Invitation(TenantMixin, db.Model):
     """Invitation model for game invitations."""
     
     __tablename__ = 'invitations'

@@ -3,8 +3,11 @@ Assignment management models.
 """
 from datetime import datetime
 from app import db
+from utils.base_model import TenantMixin
+from utils.tenant_isolation import enforce_tenant_isolation
 
-class Assignment(db.Model):
+@enforce_tenant_isolation
+class Assignment(TenantMixin, db.Model):
     """Assignment model for game logistics tasks."""
     
     __tablename__ = 'assignments'
@@ -19,8 +22,7 @@ class Assignment(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     
-    # Multi-tenant foreign keys
-    tenant_id = db.Column(db.Integer, db.ForeignKey('tenants.id'), nullable=False, index=True)
+    # tenant_id is inherited from TenantMixin
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False, index=True)
     player_id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False, index=True)
     
