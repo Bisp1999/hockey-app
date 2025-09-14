@@ -33,6 +33,10 @@ def create_app(config_name='development'):
     login_manager.login_view = 'auth.login'
     login_manager.login_message = 'Please log in to access this page.'
     
+    # Initialize tenant middleware
+    from utils.middleware import TenantMiddleware
+    TenantMiddleware(app)
+    
     # Register blueprints
     from routes.auth import auth_bp
     from routes.players import players_bp
@@ -40,13 +44,15 @@ def create_app(config_name='development'):
     from routes.invitations import invitations_bp
     from routes.statistics import statistics_bp
     from routes.assignments import assignments_bp
+    from routes.tenants import tenants_bp
     
-    app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(players_bp, url_prefix='/api/players')
     app.register_blueprint(games_bp, url_prefix='/api/games')
     app.register_blueprint(invitations_bp, url_prefix='/api/invitations')
     app.register_blueprint(statistics_bp, url_prefix='/api/statistics')
     app.register_blueprint(assignments_bp, url_prefix='/api/assignments')
+    app.register_blueprint(tenants_bp, url_prefix='/api/tenant')
     
     # Import models to ensure they are registered with SQLAlchemy
     from models import tenant, user, player, team, game, invitation, statistics, assignment

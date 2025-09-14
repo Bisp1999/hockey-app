@@ -1,42 +1,89 @@
 """
-Multi-tenant utility functions.
+Multi-tenant utility functions for tenant context and isolation.
 """
-from flask import request, g
-from models.tenant import Tenant
+from flask import request, g, current_app, abort
+from functools import wraps
+from sqlalchemy import text
+from app import db
 
 def get_current_tenant():
-    """
-    Get the current tenant based on request context.
-    Supports both subdomain and path-based tenant identification.
-    """
+    """Get the current tenant based on request context."""
+    # Check if tenant is already set in g
     if hasattr(g, 'current_tenant'):
         return g.current_tenant
     
-    tenant = None
+    # Extract tenant from subdomain or path
+    tenant_identifier = None
     
-    # Try subdomain-based tenant identification
-    if request.host:
-        subdomain = request.host.split('.')[0]
-        if subdomain and subdomain != 'www':
-            tenant = Tenant.query.filter_by(subdomain=subdomain).first()
+    # Method 1: Subdomain-based tenant identification
+    if current_app.config.get('TENANT_URL_SUBDOMAIN_ENABLED', True):
+        host = request.host.lower()
+        if '.' in host:
+            subdomain = host.split('.')[0]
+            if subdomain not in ['www', 'api', 'admin', 'localhost']:
+                tenant_identifier = subdomain
     
-    # Try path-based tenant identification if subdomain failed
-    if not tenant and request.path.startswith('/tenant/'):
-        tenant_slug = request.path.split('/')[2]
-        tenant = Tenant.query.filter_by(slug=tenant_slug).first()
+    # Method 2: Path-based tenant identification
+    if not tenant_identifier and current_app.config.get('TENANT_URL_PATH_ENABLED', False):
+        path_parts = request.path.strip('/').split('/')
+        if len(path_parts) > 0 and path_parts[0] and path_parts[0] not in ['api', 'admin']:
+            tenant_identifier = path_parts[0]
     
-    # Cache the tenant in the request context
-    g.current_tenant = tenant
-    return tenant
+    # Query database for tenant
+    if tenant_identifier:
+        from models.tenant import Tenant
+        tenant = Tenant.query.filter(
+            (Tenant.slug == tenant_identifier) | 
+            (Tenant.subdomain == tenant_identifier)
+        ).filter(Tenant.is_active == True).first()
+        
+        if tenant:
+            g.current_tenant = tenant
+            g.tenant_id = tenant.id
+            return tenant
+    
+    return None
 
-def require_tenant():
-    """Decorator to ensure a valid tenant context exists."""
-    def decorator(f):
-        def decorated_function(*args, **kwargs):
-            tenant = get_current_tenant()
-            if not tenant:
-                return {'error': 'Invalid tenant context'}, 400
-            return f(*args, **kwargs)
-        decorated_function.__name__ = f.__name__
-        return decorated_function
-    return decorator
+def get_tenant_id():
+    """Get the current tenant ID."""
+    if hasattr(g, 'tenant_id'):
+        return g.tenant_id
+    
+    tenant = get_current_tenant()
+    return tenant.id if tenant else None
+
+def require_tenant(f):
+    """Decorator to require tenant context for a route."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        tenant = get_current_tenant()
+        if not tenant:
+            abort(404, description="Tenant not found")
+        return f(*args, **kwargs)
+    return decorated_function
+
+def tenant_required(f):
+    """Alternative decorator name for requiring tenant context."""
+    return require_tenant(f)
+
+def set_tenant_context():
+    """Set tenant context for database queries."""
+    tenant_id = get_tenant_id()
+    if tenant_id:
+        # Set a session variable that can be used in database queries
+        db.session.execute(text("SET @tenant_id = :tenant_id"), {"tenant_id": tenant_id})
+
+def get_tenant_filter():
+    """Get tenant filter for database queries."""
+    tenant_id = get_tenant_id()
+    if tenant_id:
+        return {'tenant_id': tenant_id}
+    return {}
+
+def validate_tenant_access(model_instance):
+    """Validate that the current tenant has access to the model instance."""
+    tenant_id = get_tenant_id()
+    if tenant_id and hasattr(model_instance, 'tenant_id'):
+        if model_instance.tenant_id != tenant_id:
+            abort(403, description="Access denied to this resource")
+    return True
