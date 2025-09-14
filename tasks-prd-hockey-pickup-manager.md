@@ -88,8 +88,8 @@ Based on the PRD analysis, this is a greenfield project requiring full-stack dev
 - [ ] 2.0 Multi-Tenant Architecture and Authentication System
   - [x] 2.1 Design and implement tenant model with subdomain/path routing
   - [x] 2.2 Create user authentication system with Flask-Login
-  - [ ] 2.3 Implement tenant isolation middleware for all database queries
-  - [ ] 2.4 Build tenant registration and onboarding flow
+  - [x] 2.3 Implement tenant isolation middleware for all database queries
+  - [x] 2.4 Build tenant registration and onboarding flow
   - [ ] 2.5 Create admin user management within tenants
   - [ ] 2.6 Implement session management with tenant context
   - [ ] 2.7 Add security measures (CSRF protection, rate limiting)
