@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: hockey_db
+    environment:
+      POSTGRES_DB: hockey_pickup_dev
+      POSTGRES_USER: hockey_user
+      POSTGRES_PASSWORD: hockey_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - hockey_network
+
+  # Flask Backend API
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: hockey_backend
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=app.py
+      - DATABASE_URL=postgresql://hockey_user:hockey_password@db:5432/hockey_pickup_dev
+      - SECRET_KEY=dev-secret-key-change-in-production
+      - MAIL_SERVER=mailhog
+      - MAIL_PORT=1025
+      - MAIL_USE_TLS=false
+      - MAIL_USERNAME=
+      - MAIL_PASSWORD=
+      - MAIL_DEFAULT_SENDER=noreply@hockeypickup.local
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - db
+      - mailhog
+    networks:
+      - hockey_network
+    command: flask run --host=0.0.0.0 --port=5000 --debug
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    container_name: hockey_frontend
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - hockey_network
+    command: npm start
+
+  # MailHog for email testing
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: hockey_mailhog
+    ports:
+      - "1025:1025"  # SMTP server
+      - "8025:8025"  # Web UI
+    networks:
+      - hockey_network
+
+  # Redis for session storage (optional, for production scaling)
+  redis:
+    image: redis:7-alpine
+    container_name: hockey_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - hockey_network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  hockey_network:
+    driver: bridge
