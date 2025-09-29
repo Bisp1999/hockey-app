@@ -1,11 +1,14 @@
 """
 Main Flask application entry point with multi-tenant configuration.
 """
-from flask import Flask
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_mail import Mail
 from flask_login import LoginManager
+from flask_wtf.csrf import CSRFProtect, CSRFError
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from config import config
 from load_env import load_environment
 
@@ -14,6 +17,8 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 mail = Mail()
 migrate = Migrate()
+csrf = CSRFProtect()
+limiter = Limiter(key_func=get_remote_address)
 
 def create_app(config_name='development'):
     """Application factory pattern for Flask app creation."""
@@ -28,6 +33,12 @@ def create_app(config_name='development'):
     login_manager.init_app(app)
     mail.init_app(app)
     migrate.init_app(app, db)
+    csrf.init_app(app)
+    # Initialize rate limiter with env-configured defaults
+    default_limits = []
+    if app.config.get('RATELIMIT_ENABLED', False):
+        default_limits = [app.config.get('RATELIMIT_DEFAULT', '100 per hour')]
+    limiter.init_app(app, default_limits=default_limits)
     
     # Configure login manager
     login_manager.login_view = 'auth.login'
@@ -59,6 +70,11 @@ def create_app(config_name='development'):
     app.register_blueprint(statistics_bp, url_prefix='/api/statistics')
     app.register_blueprint(assignments_bp, url_prefix='/api/assignments')
     app.register_blueprint(tenants_bp, url_prefix='/api/tenant')
+    
+    # CSRF error handler (JSON response for API)
+    @app.errorhandler(CSRFError)
+    def handle_csrf_error(e):
+        return jsonify({'error': 'CSRF token missing or invalid', 'description': e.description}), 400
     
     # Import models to ensure they are registered with SQLAlchemy
     from models import tenant, user, player, team, game, invitation, statistics, assignment

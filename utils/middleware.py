@@ -1,7 +1,8 @@
 """
 Middleware for multi-tenant request processing.
 """
-from flask import request, g, current_app
+from flask import request, g, current_app, session, jsonify
+from flask_login import current_user, logout_user
 from utils.tenant import get_current_tenant, set_tenant_context
 
 class TenantMiddleware:
@@ -34,8 +35,19 @@ class TenantMiddleware:
         
         # For API routes, ensure tenant is present
         if request.path.startswith('/api/') and not tenant:
-            from flask import jsonify
             return jsonify({'error': 'Tenant context required'}), 400
+        
+        # Enforce tenant-aware sessions: if authenticated, session tenant must match request tenant
+        if request.path.startswith('/api/') and current_user.is_authenticated and tenant:
+            sess_tenant_id = session.get('tenant_id')
+            if sess_tenant_id is None:
+                # Backfill missing session binding to current tenant
+                session['tenant_id'] = tenant.id
+            elif sess_tenant_id != tenant.id:
+                # Mismatch: logout to prevent cross-tenant session leakage
+                logout_user()
+                session.pop('tenant_id', None)
+                return jsonify({'error': 'Tenant mismatch. Please sign in for this tenant.'}), 401
     
     def after_request(self, response):
         """Clean up after request processing."""
