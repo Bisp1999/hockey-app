@@ -1,4 +1,6 @@
-{{ ... }}
+"""
+Authentication routes for user login, registration, and session management.
+"""
 from flask import Blueprint, request, jsonify, current_app, session
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_mail import Message
@@ -8,7 +10,10 @@ from utils.tenant import get_current_tenant, get_tenant_id
 from utils.decorators import tenant_required
 from app import db, mail, limiter, csrf
 import re
-{{ ... }}
+from flask_wtf.csrf import generate_csrf
+
+auth_bp = Blueprint('auth', __name__)
+
 @auth_bp.route('/csrf-token', methods=['GET'])
 def get_csrf_token():
     """Return a CSRF token for SPA clients. Include it as X-CSRFToken header in future unsafe requests."""
@@ -58,7 +63,7 @@ def login():
         'user': user.to_dict(),
         'tenant': tenant.to_dict()
     })
-{{ ... }}
+
 @auth_bp.route('/verify-email/<token>', methods=['POST'])
 @limiter.limit("20 per hour")
 @csrf.exempt
@@ -68,17 +73,17 @@ def verify_email(token):
     
     if not user:
         return jsonify({'error': 'Invalid verification token'}), 400
-{{ ... }}
+
 @auth_bp.route('/forgot-password', methods=['POST'])
 @tenant_required
 @limiter.limit("5 per hour")
 def forgot_password():
     """Request password reset."""
     data = request.get_json()
-{{ ... }}
+
 @auth_bp.route('/reset-password', methods=['POST'])
 @limiter.limit("5 per hour")
 def reset_password():
     """Reset password with token."""
     data = request.get_json()
-{{ ... }}
+

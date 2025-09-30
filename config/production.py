@@ -2,6 +2,7 @@
 
 import os
 from datetime import timedelta
+from .base import Config 
 
 class ProductionConfig:
     """Production configuration settings"""

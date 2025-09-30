@@ -2,7 +2,7 @@
 
 import os
 from datetime import timedelta
-from config import Config
+from .base import Config
 
 class DevelopmentConfig(Config):
     """Development-specific configuration overrides."""

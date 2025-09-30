@@ -155,25 +155,39 @@ def validate_tenant_access(model_instance):
 
 def enforce_tenant_isolation(model_class):
     """Class decorator to enforce tenant isolation on a model."""
+    from flask import has_request_context
     
-    # Override the query property to automatically filter by tenant
-    original_query = model_class.query
+    # Store reference to the original query class
+    _original_query_class = model_class.__dict__.get('query_class')
     
-    @property
-    def tenant_aware_query(cls):
-        from utils.tenant import get_current_tenant_id
-        
-        if not has_request_context():
-            return original_query
-        
-        if hasattr(cls, 'tenant_id'):
-            tenant_id = get_current_tenant_id()
-            if tenant_id:
-                return original_query.filter(cls.tenant_id == tenant_id)
-        
-        return original_query
+    # Don't try to access .query at decoration time - it requires app context
+    # Instead, we'll create a custom query class that filters automatically
     
-    # Replace the query property
-    model_class.query = tenant_aware_query
+    class TenantQuery(model_class.query_class if hasattr(model_class, 'query_class') else db.Query):
+        def get(self, ident):
+            # Override get to add tenant filtering
+            obj = super().get(ident)
+            if obj and hasattr(obj, 'tenant_id'):
+                from utils.tenant import get_current_tenant_id
+                if has_request_context():
+                    tenant_id = get_current_tenant_id()
+                    if tenant_id and obj.tenant_id != tenant_id:
+                        return None
+            return obj
+        
+        def __iter__(self):
+            # Override iteration to add tenant filtering
+            from utils.tenant import get_current_tenant_id
+            
+            if has_request_context() and hasattr(model_class, 'tenant_id'):
+                tenant_id = get_current_tenant_id()
+                if tenant_id:
+                    # Add tenant filter to the query
+                    return super().filter(model_class.tenant_id == tenant_id).__iter__()
+            
+            return super().__iter__()
+    
+    # Set the custom query class
+    model_class.query_class = TenantQuery
     
     return model_class

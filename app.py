@@ -18,7 +18,10 @@ login_manager = LoginManager()
 mail = Mail()
 migrate = Migrate()
 csrf = CSRFProtect()
-limiter = Limiter(key_func=get_remote_address)
+limiter = Limiter(
+    key_func=get_remote_address,
+    storage_uri="memory://"
+)
 
 def create_app(config_name='development'):
     """Application factory pattern for Flask app creation."""
@@ -34,11 +37,8 @@ def create_app(config_name='development'):
     mail.init_app(app)
     migrate.init_app(app, db)
     csrf.init_app(app)
-    # Initialize rate limiter with env-configured defaults
-    default_limits = []
-    if app.config.get('RATELIMIT_ENABLED', False):
-        default_limits = [app.config.get('RATELIMIT_DEFAULT', '100 per hour')]
-    limiter.init_app(app, default_limits=default_limits)
+    # Initialize rate limiter
+    limiter.init_app(app)
     
     # Configure login manager
     login_manager.login_view = 'auth.login'

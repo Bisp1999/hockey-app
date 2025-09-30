@@ -2,6 +2,7 @@
 
 import os
 from datetime import timedelta
+from .base import Config 
 
 class TestingConfig:
     """Testing configuration settings"""
