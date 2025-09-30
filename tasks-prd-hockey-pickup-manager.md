@@ -90,18 +90,18 @@ Based on the PRD analysis, this is a greenfield project requiring full-stack dev
   - [x] 2.2 Create user authentication system with Flask-Login
   - [x] 2.3 Implement tenant isolation middleware for all database queries
   - [x] 2.4 Build tenant registration and onboarding flow
-  - [ ] 2.5 Create admin user management within tenants
-  - [ ] 2.6 Implement session management with tenant context
-  - [ ] 2.7 Add security measures (CSRF protection, rate limiting)
+  - [x] 2.5 Create admin user management within tenants
+  - [x] 2.6 Implement session management with tenant context
+  - [x] 2.7 Add security measures (CSRF protection, rate limiting)
 
 - [ ] 3.0 Player Management System
-  - [ ] 3.1 Create player model with name, email, position, type, and photo fields
-  - [ ] 3.2 Implement player CRUD operations with tenant isolation
-  - [ ] 3.3 Build player list interface with search and filtering
-  - [ ] 3.4 Create player form with photo upload functionality
-  - [ ] 3.5 Implement player type management (Regular/Spare with Priority 1/2)
-  - [ ] 3.6 Add position configuration system (3-position vs 2-position modes)
-  - [ ] 3.7 Create player profile view with statistics summary
+  - [x] 3.1 Create player model with name, email, position, type, and photo fields
+  - [x] 3.2 Implement player CRUD operations with tenant isolation
+  - [x] 3.3 Build player list interface with search and filtering
+  - [x] 3.4 Create player form with photo upload functionality
+  - [x] 3.5 Implement player type management (Regular/Spare with Priority 1/2)
+  - [x] 3.6 Add position configuration system (3-position vs 2-position modes)
+  - [x] 3.7 Create player profile view with statistics summary
 
 - [ ] 4.0 Team Configuration and Game Scheduling
   - [ ] 4.1 Create team model with names and jersey color configuration
@@ -183,3 +183,9 @@ Based on the PRD analysis, this is a greenfield project requiring full-stack dev
   - [ ] 12.5 Set up backup and disaster recovery procedures
   - [ ] 12.6 Create deployment scripts and documentation
   - [ ] 12.7 Perform load testing and performance optimization
+
+- [ ] 13.0 Optional Tasks
+  - [ ] 12.1 Pagination & sorting for GET /users.
+  - [ ] 12.2 Audit logging of admin actions (role changes, activation, deletion).
+  - [ ] 12.3 Invite acceptance endpoint to let invited users set their password.
+  - [ ] 12.4 Frontend admin UI (list, filters, actions, confirmation modals).
