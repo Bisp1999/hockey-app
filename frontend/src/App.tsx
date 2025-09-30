@@ -12,6 +12,7 @@ import StatsDashboard from './components/Statistics/StatsDashboard';
 import AssignmentManager from './components/Assignments/AssignmentManager';
 import TeamConfig from './components/Teams/TeamConfig';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
+import PlayerProfile from './components/Players/PlayerProfile';
 import './App.css';
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
                 <Route index element={<Navigate to="/dashboard" replace />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="players" element={<PlayerList />} />
+                <Route path="players/:id" element={<PlayerProfile />} />  
                 <Route path="games" element={<GameCalendar />} />
                 <Route path="invitations" element={<InvitationDashboard />} />
                 <Route path="statistics" element={<StatsDashboard />} />

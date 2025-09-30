@@ -1,0 +1,185 @@
+.player-profile {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .profile-header {
+    margin-bottom: 30px;
+  }
+  
+  .back-btn {
+    background: none;
+    border: none;
+    color: #007bff;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 8px 0;
+    margin-bottom: 10px;
+  }
+  
+  .back-btn:hover {
+    text-decoration: underline;
+  }
+  
+  .profile-header h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #333;
+  }
+  
+  .profile-card {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 30px;
+    margin-bottom: 30px;
+  }
+  
+  .profile-photo-section {
+    flex-shrink: 0;
+  }
+  
+  .profile-photo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #dee2e6;
+  }
+  
+  .profile-photo-placeholder {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: #6c757d;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 48px;
+  }
+  
+  .profile-info {
+    flex: 1;
+  }
+  
+  .profile-info h2 {
+    margin: 0 0 20px 0;
+    font-size: 32px;
+    color: #212529;
+  }
+  
+  .profile-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+  }
+  
+  .detail-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .detail-label {
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 14px;
+  }
+  
+  .detail-value {
+    font-size: 14px;
+    color: #212529;
+  }
+  
+  .stats-section,
+  .invitations-section,
+  .assignments-section,
+  .goalie-stats {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+  
+  .stats-section h3,
+  .invitations-section h3,
+  .assignments-section h3 {
+    margin: 0 0 20px 0;
+    font-size: 22px;
+    color: #333;
+  }
+  
+  .goalie-stats h4 {
+    margin: 20px 0 15px 0;
+    font-size: 18px;
+    color: #495057;
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+  }
+  
+  .stat-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    border: 2px solid #e9ecef;
+  }
+  
+  .stat-card.highlight {
+    background: #e3f2fd;
+    border-color: #1976d2;
+  }
+  
+  .stat-card-large {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    border: 2px solid #e9ecef;
+    max-width: 300px;
+  }
+  
+  .stat-value {
+    font-size: 32px;
+    font-weight: bold;
+    color: #212529;
+    margin-bottom: 8px;
+  }
+  
+  .stat-label {
+    font-size: 14px;
+    color: #6c757d;
+    font-weight: 500;
+  }
+  
+  .loading {
+    text-align: center;
+    padding: 60px 20px;
+    font-size: 18px;
+    color: #6c757d;
+  }
+  
+  .error-container {
+    text-align: center;
+    padding: 60px 20px;
+  }
+  
+  .error-message {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 15px 20px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    border: 1px solid #f5c6cb;
+    display: inline-block;
+  }
