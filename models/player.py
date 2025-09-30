@@ -6,6 +6,20 @@ from app import db
 from utils.base_model import TenantMixin
 from utils.tenant_isolation import enforce_tenant_isolation
 
+# Position constants
+POSITION_GOALTENDER = 'goaltender'
+POSITION_DEFENCE = 'defence'
+POSITION_FORWARD = 'forward'
+POSITION_SKATER = 'skater'
+
+# Player type constants
+PLAYER_TYPE_REGULAR = 'regular'
+PLAYER_TYPE_SPARE = 'spare'
+
+# Spare priority constants
+SPARE_PRIORITY_1 = 1
+SPARE_PRIORITY_2 = 2
+
 @enforce_tenant_isolation
 class Player(TenantMixin, db.Model):
     """Player model with multi-tenant support."""
@@ -37,9 +51,31 @@ class Player(TenantMixin, db.Model):
     def __repr__(self):
         return f'<Player {self.name} ({self.position})>'
     
-    def to_dict(self):
+    @property
+    def photo_url(self):
+        """Get photo URL if photo exists."""
+        if self.photo_filename:
+            return f'/uploads/players/{self.photo_filename}'
+        return None
+    
+    @property
+    def is_spare(self):
+        """Check if player is a spare."""
+        return self.player_type == PLAYER_TYPE_SPARE
+    
+    @property
+    def is_regular(self):
+        """Check if player is a regular."""
+        return self.player_type == PLAYER_TYPE_REGULAR
+    
+    @property
+    def is_goaltender(self):
+        """Check if player is a goaltender."""
+        return self.position == POSITION_GOALTENDER
+    
+    def to_dict(self, include_photo_url=True):
         """Convert player to dictionary."""
-        return {
+        data = {
             'id': self.id,
             'name': self.name,
             'email': self.email,
@@ -53,10 +89,8 @@ class Player(TenantMixin, db.Model):
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
         }
-    
-    @property
-    def photo_url(self):
-        """Get photo URL if photo exists."""
-        if self.photo_filename:
-            return f'/uploads/{self.photo_filename}'
-        return None
+        
+        if include_photo_url:
+            data['photo_url'] = self.photo_url
+        
+        return data
