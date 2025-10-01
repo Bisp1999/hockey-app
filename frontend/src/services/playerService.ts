@@ -1,7 +1,5 @@
-import axios from 'axios';
+import { apiClient } from '../utils/api';
 import { Player, PlayerFormData } from '../types';
-
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 export const playerService = {
   // Get all players with optional filters
@@ -20,13 +18,13 @@ export const playerService = {
         if (value) params.append(key, value);
       });
     }
-    const response = await axios.get(`${API_BASE_URL}/players?${params.toString()}`);
+    const response = await apiClient.get(`/players?${params.toString()}`);
     return response.data;
   },
 
   // Get single player
   async getPlayer(id: number): Promise<Player> {
-    const response = await axios.get(`${API_BASE_URL}/players/${id}`);
+    const response = await apiClient.get(`/players/${id}`);
     return response.data.player;
   },
 
@@ -47,7 +45,7 @@ export const playerService = {
       formData.append('photo', data.photo);
     }
 
-    const response = await axios.post(`${API_BASE_URL}/players`, formData, {
+    const response = await apiClient.post(`/players`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data.player;
@@ -65,7 +63,7 @@ export const playerService = {
     if (data.spare_priority) formData.append('spare_priority', data.spare_priority.toString());
     if (data.photo) formData.append('photo', data.photo);
 
-    const response = await axios.put(`${API_BASE_URL}/players/${id}`, formData, {
+    const response = await apiClient.put(`/players/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data.player;
@@ -73,11 +71,11 @@ export const playerService = {
 
   // Delete player
   async deletePlayer(id: number): Promise<void> {
-    await axios.delete(`${API_BASE_URL}/players/${id}`);
+    await apiClient.delete(`/players/${id}`);
   },
 
   // Delete player photo
   async deletePlayerPhoto(id: number): Promise<void> {
-    await axios.delete(`${API_BASE_URL}/players/${id}/photo`);
+    await apiClient.delete(`/players/${id}/photo`);
   }
 };

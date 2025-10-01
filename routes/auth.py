@@ -21,6 +21,7 @@ def get_csrf_token():
     return jsonify({'csrfToken': token})
 
 @auth_bp.route('/login', methods=['POST'])
+@csrf.exempt  # Add this line
 @tenant_required
 @limiter.limit("5 per minute")
 def login():
@@ -62,6 +63,24 @@ def login():
         'message': 'Login successful',
         'user': user.to_dict(),
         'tenant': tenant.to_dict()
+    })
+
+@auth_bp.route('/logout', methods=['POST'])
+@login_required
+def logout():
+    """User logout endpoint."""
+    logout_user()
+    session.clear()
+    return jsonify({'message': 'Logout successful'})
+
+@auth_bp.route('/me', methods=['GET'])
+@login_required
+def get_current_user():
+    """Get current authenticated user information."""
+    tenant = get_current_tenant()
+    return jsonify({
+        'user': current_user.to_dict(),
+        'tenant': tenant.to_dict() if tenant else None
     })
 
 @auth_bp.route('/verify-email/<token>', methods=['POST'])

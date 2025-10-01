@@ -2,6 +2,7 @@
 Main Flask application entry point with multi-tenant configuration.
 """
 from flask import Flask, jsonify
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_mail import Mail
@@ -30,6 +31,16 @@ def create_app(config_name='development'):
     
     app = Flask(__name__)
     app.config.from_object(config[config_name])
+
+    # Enable CORS for frontend
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": ["http://localhost:3000", "http://myteam.localhost:3000"],
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"],
+            "supports_credentials": True
+        }
+    })
     
     # Initialize extensions with app
     db.init_app(app)

@@ -70,8 +70,16 @@ def set_tenant_context():
     """Set tenant context for database queries."""
     tenant_id = get_tenant_id()
     if tenant_id:
-        # Set a session variable that can be used in database queries
-        db.session.execute(text("SET @tenant_id = :tenant_id"), {"tenant_id": tenant_id})
+        # Store in Flask's g object (already done by get_current_tenant)
+        # Only set database session variable for PostgreSQL/MySQL, not SQLite
+        try:
+            # Check database dialect
+            if db.engine.dialect.name in ['postgresql', 'mysql']:
+                db.session.execute(text("SET @tenant_id = :tenant_id"), {"tenant_id": tenant_id})
+        except Exception:
+            # Silently fail for SQLite or if there's any issue
+            # The tenant_id is already available in g.tenant_id
+            pass
 
 def get_tenant_filter():
     """Get tenant filter for database queries."""

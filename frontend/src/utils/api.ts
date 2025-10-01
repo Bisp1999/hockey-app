@@ -3,7 +3,7 @@ import { ApiResponse } from '../types';
 
 // Create axios instance with default configuration
 export const apiClient = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000',
+  baseURL: process.env.REACT_APP_API_URL || '/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -11,10 +11,33 @@ export const apiClient = axios.create({
   withCredentials: true, // Include cookies for session management
 });
 
-// Request interceptor to add authentication headers
+// Fetch CSRF token on initialization
+let csrfToken: string | null = null;
+
+const fetchCsrfToken = async () => {
+  try {
+    const response = await axios.get('/api/auth/csrf-token', { withCredentials: true });
+    csrfToken = response.data.csrfToken;
+  } catch (error) {
+    console.error('Failed to fetch CSRF token:', error);
+  }
+};
+
+// Initialize CSRF token
+fetchCsrfToken();
+
+// Request interceptor to add CSRF token
 apiClient.interceptors.request.use(
-  (config) => {
-    // Add any additional headers or authentication tokens here
+  async (config) => {
+    // Add CSRF token for unsafe methods
+    if (config.method && ['post', 'put', 'delete', 'patch'].includes(config.method.toLowerCase())) {
+      if (!csrfToken) {
+        await fetchCsrfToken();
+      }
+      if (csrfToken) {
+        config.headers['X-CSRFToken'] = csrfToken;
+      }
+    }
     return config;
   },
   (error) => {
@@ -27,7 +50,18 @@ apiClient.interceptors.response.use(
   (response) => {
     return response;
   },
-  (error) => {
+  async (error) => {
+    // Retry CSRF token fetch on 400 CSRF errors
+    if (error.response?.status === 400 && error.response?.data?.error?.includes('CSRF')) {
+      await fetchCsrfToken();
+      // Retry the request
+      const config = error.config;
+      if (csrfToken) {
+        config.headers['X-CSRFToken'] = csrfToken;
+      }
+      return apiClient.request(config);
+    }
+    
     if (error.response?.status === 401) {
       // Redirect to login on unauthorized
       window.location.href = '/login';

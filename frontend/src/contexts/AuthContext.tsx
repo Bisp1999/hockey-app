@@ -22,8 +22,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await apiClient.get('/auth/me');
       if (response.data.user) {
         setUser(response.data.user);
-        // Tenant information would be included in the user response
-        // or fetched separately based on tenant_id
+        // Set tenant from response
+        if (response.data.tenant) {
+          setTenant(response.data.tenant);
+        }
       }
     } catch (error) {
       // User not authenticated
@@ -39,6 +41,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await apiClient.post('/auth/login', { email, password });
       if (response.data.user) {
         setUser(response.data.user);
+        // Set tenant from login response
+        if (response.data.tenant) {
+          setTenant(response.data.tenant);
+        }
         return true;
       }
       return false;

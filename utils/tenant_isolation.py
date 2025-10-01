@@ -76,12 +76,12 @@ class TenantIsolationMiddleware:
         @event.listens_for(self.db.session, 'before_flush')
         def before_flush(session, flush_context, instances):
             """Ensure all new objects have tenant_id set."""
-            from utils.tenant import get_current_tenant_id
+            from utils.tenant import get_tenant_id
             
             if not has_request_context():
                 return
             
-            tenant_id = get_current_tenant_id()
+            tenant_id = get_tenant_id()
             if not tenant_id:
                 return
             
@@ -102,7 +102,7 @@ class TenantIsolationMiddleware:
     
     def _filter_bulk_operation(self, query_context):
         """Apply tenant filter to bulk operations."""
-        from utils.tenant import get_current_tenant_id
+        from utils.tenant import get_tenant_id
         
         if not has_request_context():
             return
@@ -111,7 +111,7 @@ class TenantIsolationMiddleware:
         if not hasattr(model_class, 'tenant_id'):
             return
         
-        tenant_id = get_current_tenant_id()
+        tenant_id = get_tenant_id()
         if tenant_id:
             # Add tenant filter to the query
             query_context.whereclause = query_context.whereclause & (
@@ -135,13 +135,13 @@ def tenant_required(f):
 
 def validate_tenant_access(model_instance):
     """Validate that the current user can access the given model instance."""
-    from utils.tenant import get_current_tenant_id
+    from utils.tenant import get_tenant_id
     from flask_login import current_user
     
     if not hasattr(model_instance, 'tenant_id'):
         return True
     
-    current_tenant_id = get_current_tenant_id()
+    current_tenant_id = get_tenant_id()
     if not current_tenant_id:
         return False
     
@@ -168,19 +168,19 @@ def enforce_tenant_isolation(model_class):
             # Override get to add tenant filtering
             obj = super().get(ident)
             if obj and hasattr(obj, 'tenant_id'):
-                from utils.tenant import get_current_tenant_id
+                from utils.tenant import get_tenant_id
                 if has_request_context():
-                    tenant_id = get_current_tenant_id()
+                    tenant_id = get_tenant_id()
                     if tenant_id and obj.tenant_id != tenant_id:
                         return None
             return obj
         
         def __iter__(self):
             # Override iteration to add tenant filtering
-            from utils.tenant import get_current_tenant_id
+            from utils.tenant import get_tenant_id
             
             if has_request_context() and hasattr(model_class, 'tenant_id'):
-                tenant_id = get_current_tenant_id()
+                tenant_id = get_tenant_id()
                 if tenant_id:
                     # Add tenant filter to the query
                     return super().filter(model_class.tenant_id == tenant_id).__iter__()
