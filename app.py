@@ -1,7 +1,7 @@
 """
 Main Flask application entry point with multi-tenant configuration.
 """
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -36,9 +36,10 @@ def create_app(config_name='development'):
     CORS(app, resources={
         r"/api/*": {
             "origins": ["http://localhost:3000", "http://myteam.localhost:3000"],
-            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-            "allow_headers": ["Content-Type", "Authorization"],
-            "supports_credentials": True
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+            "allow_headers": ["Content-Type", "Authorization", "X-CSRFToken"],
+            "supports_credentials": True,
+            "expose_headers": ["Content-Type", "X-CSRFToken"]
         }
     })
     
@@ -86,6 +87,15 @@ def create_app(config_name='development'):
     @app.errorhandler(CSRFError)
     def handle_csrf_error(e):
         return jsonify({'error': 'CSRF token missing or invalid', 'description': e.description}), 400
+    
+    # Serve uploaded files
+    @app.route('/uploads/<path:filename>')
+    def uploaded_file(filename):
+        """Serve uploaded files."""
+        import os
+        # Use the base uploads folder, not the configured one (which includes /players)
+        base_upload_folder = os.path.join(os.path.dirname(__file__), 'uploads')
+        return send_from_directory(base_upload_folder, filename)
     
     # Import models to ensure they are registered with SQLAlchemy
     from models import tenant, user, player, team, game, invitation, statistics, assignment

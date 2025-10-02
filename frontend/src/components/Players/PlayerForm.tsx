@@ -6,15 +6,24 @@ import './PlayerForm.css';
 
 interface PlayerFormProps {
   player: Player | null;
-  onClose: () => void;
+  onClose: (successMessage?: string) => void;  // UPDATE THIS LINE
 }
 
 const PlayerForm: React.FC<PlayerFormProps> = ({ player, onClose }) => {
   const { t } = useTranslation();
+  
+  // Helper to get full photo URL
+  const getPhotoUrl = (photoUrl: string | null | undefined) => {
+    if (!photoUrl) return null;
+    if (photoUrl.startsWith('data:')) return photoUrl;
+    // Use localhost for backend (Docker maps to localhost, not myteam.localhost)
+    return `http://localhost:5000${photoUrl}`;
+  };
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(
-    player?.photo_url || null
+    getPhotoUrl(player?.photo_url)
   );
 
   const [formData, setFormData] = useState<PlayerFormData>({
@@ -86,29 +95,29 @@ const PlayerForm: React.FC<PlayerFormProps> = ({ player, onClose }) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
+  
     try {
       if (player) {
         // Update existing player
         await playerService.updatePlayer(player.id, formData);
+        onClose(`${formData.name} updated successfully`);  // UPDATE THIS LINE
       } else {
         // Create new player
         await playerService.createPlayer(formData);
+        onClose(`${formData.name} created successfully`);  // UPDATE THIS LINE
       }
-      onClose();
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to save player');
-    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={() => onClose()}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>{player ? 'Edit Player' : 'Add New Player'}</h2>
-          <button className="close-btn" onClick={onClose}>×</button>
+          <button className="close-btn" onClick={() => onClose()}>×</button>
         </div>
 
         {error && <div className="error-message">{error}</div>}
@@ -244,7 +253,7 @@ const PlayerForm: React.FC<PlayerFormProps> = ({ player, onClose }) => {
             <button
               type="button"
               className="btn btn-secondary"
-              onClick={onClose}
+              onClick={() => onClose()}
               disabled={loading}
             >
               Cancel

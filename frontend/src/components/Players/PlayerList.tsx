@@ -14,6 +14,7 @@ const PlayerList: React.FC = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);  // ADD THIS LINE
   const [showForm, setShowForm] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -58,19 +59,28 @@ const PlayerList: React.FC = () => {
     if (!window.confirm(`Are you sure you want to delete ${player.name}?`)) {
       return;
     }
-
+  
     try {
       await playerService.deletePlayer(player.id);
+      setSuccess(`${player.name} deleted successfully`);  // ADD THIS
+      setTimeout(() => setSuccess(null), 3000);  // ADD THIS
       loadPlayers();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to delete player');
+      setError(err.response?.data?.error || 'Failed to delete player');
     }
   };
 
-  const handleFormClose = () => {
+  const handleFormClose = (successMessage?: string) => {
     setShowForm(false);
     setEditingPlayer(null);
     loadPlayers();
+    
+    // Show success message if provided
+    if (successMessage) {
+      setSuccess(successMessage);
+      // Auto-hide after 3 seconds
+      setTimeout(() => setSuccess(null), 3000);
+    }
   };
 
   const getPositionBadge = (position: string) => {
@@ -104,6 +114,7 @@ const PlayerList: React.FC = () => {
       </div>
 
       {error && <div className="error-message">{error}</div>}
+      {success && <div className="success-message">{success}</div>}  {/* ADD THIS LINE */}
 
       {/* Search and Filters */}
       <div className="player-filters">

@@ -18,7 +18,7 @@ export const playerService = {
         if (value) params.append(key, value);
       });
     }
-    const response = await apiClient.get(`/players?${params.toString()}`);
+    const response = await apiClient.get(`/players/?${params.toString()}`);
     return response.data;
   },
 
@@ -45,7 +45,7 @@ export const playerService = {
       formData.append('photo', data.photo);
     }
 
-    const response = await apiClient.post(`/players`, formData, {
+    const response = await apiClient.post(`/players/`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data.player;
@@ -76,6 +76,6 @@ export const playerService = {
 
   // Delete player photo
   async deletePlayerPhoto(id: number): Promise<void> {
-    await apiClient.delete(`/players/${id}/photo`);
+    await apiClient.delete(`/players/${id}/photo/`);
   }
 };

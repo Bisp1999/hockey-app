@@ -98,6 +98,9 @@
   
   .photo-preview {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   
   .photo-preview img {
@@ -106,6 +109,17 @@
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid #dee2e6;
+    display: block;
+  }
+  
+  .photo-input {
+    font-size: 14px;
+    max-width: 300px;
+  }
+  
+  /* Hide the file input when photo is uploaded */
+  .photo-upload-container:has(.photo-preview) .photo-input {
+    display: none;
   }
   
   .photo-placeholder {
