@@ -6,7 +6,7 @@ import Layout from './components/Layout/Layout';
 import Login from './components/Auth/Login';
 import Dashboard from './components/Dashboard/Dashboard';
 import PlayerList from './components/Players/PlayerList';
-import GameCalendar from './components/Games/GameCalendar';
+import GameList from './components/Games/GameList';
 import InvitationDashboard from './components/Invitations/InvitationDashboard';
 import StatsDashboard from './components/Statistics/StatsDashboard';
 import AssignmentManager from './components/Assignments/AssignmentManager';
@@ -32,7 +32,7 @@ function App() {
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="players" element={<PlayerList />} />
                 <Route path="players/:id" element={<PlayerProfile />} />  
-                <Route path="games" element={<GameCalendar />} />
+                <Route path="games" element={<GameList />} />
                 <Route path="invitations" element={<InvitationDashboard />} />
                 <Route path="statistics" element={<StatsDashboard />} />
                 <Route path="assignments" element={<AssignmentManager />} />
