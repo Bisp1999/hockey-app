@@ -198,4 +198,5 @@ export interface PlayerFormData {
   spare_priority?: 1 | 2;
   language: 'en' | 'fr';
   photo?: File;
+  is_active?: boolean; 
 }

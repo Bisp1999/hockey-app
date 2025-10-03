@@ -74,6 +74,7 @@ def create_app(config_name='development'):
     from routes.statistics import statistics_bp
     from routes.assignments import assignments_bp
     from routes.tenants import tenants_bp
+    from routes.teams import teams_bp
     
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(players_bp, url_prefix='/api/players')
@@ -82,6 +83,7 @@ def create_app(config_name='development'):
     app.register_blueprint(statistics_bp, url_prefix='/api/statistics')
     app.register_blueprint(assignments_bp, url_prefix='/api/assignments')
     app.register_blueprint(tenants_bp, url_prefix='/api/tenant')
+    app.register_blueprint(teams_bp, url_prefix='/api/teams')
     
     # CSRF error handler (JSON response for API)
     @app.errorhandler(CSRFError)

@@ -1,0 +1,143 @@
+.team-settings {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .settings-header {
+    margin-bottom: 30px;
+  }
+  
+  .settings-header h1 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 8px;
+  }
+  
+  .settings-header p {
+    color: #666;
+    font-size: 14px;
+  }
+  
+  .team-settings-form {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .team-section {
+    margin-bottom: 40px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .team-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+  
+  .team-section h2 {
+    font-size: 20px;
+    color: #495057;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #495057;
+    font-size: 14px;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+  }
+  
+  .form-control:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  }
+  
+  .color-input-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .color-input-group .form-control {
+    flex: 1;
+  }
+  
+  .color-preview {
+    width: 50px;
+    height: 38px;
+    border: 2px solid #dee2e6;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #dee2e6;
+  }
+  
+  .error-message {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 12px 20px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    border: 1px solid #f5c6cb;
+  }
+  
+  .success-message {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    padding: 12px 20px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    animation: slideIn 0.3s ease-out;
+  }
+  
+  .success-message::before {
+    content: '✓';
+    font-size: 20px;
+    margin-right: 10px;
+    font-weight: bold;
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .loading {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+  }

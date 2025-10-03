@@ -171,3 +171,26 @@
     margin: 0 20px 20px 20px;
     border: 1px solid #f5c6cb;
   }
+
+  .checkbox-group {
+    text-align: left !important;
+  }
+  
+  .checkbox-group .checkbox-label {
+    display: inline-flex !important;  /* Use inline-flex instead of flex */
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0 !important;
+    width: auto !important;  /* Don't take full width */
+  }
+  
+  .checkbox-group .checkbox-input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    margin: 0;
+    flex-shrink: 0;
+  }

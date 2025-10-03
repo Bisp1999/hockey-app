@@ -11,7 +11,7 @@ interface PlayerFormProps {
 
 const PlayerForm: React.FC<PlayerFormProps> = ({ player, onClose }) => {
   const { t } = useTranslation();
-  
+
   // Helper to get full photo URL
   const getPhotoUrl = (photoUrl: string | null | undefined) => {
     if (!photoUrl) return null;
@@ -19,7 +19,7 @@ const PlayerForm: React.FC<PlayerFormProps> = ({ player, onClose }) => {
     // Use localhost for backend (Docker maps to localhost, not myteam.localhost)
     return `http://localhost:5000${photoUrl}`;
   };
-  
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(
@@ -33,7 +33,8 @@ const PlayerForm: React.FC<PlayerFormProps> = ({ player, onClose }) => {
     player_type: player?.player_type || 'regular',
     spare_priority: player?.spare_priority || undefined,
     language: player?.language || 'en',
-    photo: undefined
+    photo: undefined,
+    is_active: player?.is_active !== undefined ? player.is_active : true
   });
 
   const handleChange = (
@@ -43,6 +44,14 @@ const PlayerForm: React.FC<PlayerFormProps> = ({ player, onClose }) => {
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: checked
     }));
   };
 
@@ -63,7 +72,7 @@ const PlayerForm: React.FC<PlayerFormProps> = ({ player, onClose }) => {
       }
 
       setFormData(prev => ({ ...prev, photo: file }));
-      
+
       // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -95,7 +104,7 @@ const PlayerForm: React.FC<PlayerFormProps> = ({ player, onClose }) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-  
+
     try {
       if (player) {
         // Update existing player
@@ -246,6 +255,20 @@ const PlayerForm: React.FC<PlayerFormProps> = ({ player, onClose }) => {
               <option value="en">English</option>
               <option value="fr">Français</option>
             </select>
+          </div>
+
+          {/* Active Status */}
+          <div className="form-group checkbox-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                name="is_active"
+                checked={formData.is_active ?? true}
+                onChange={handleCheckboxChange}
+                className="checkbox-input"
+              />
+              Active Player
+            </label>
           </div>
 
           {/* Form Actions */}

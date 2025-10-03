@@ -203,6 +203,15 @@ def create_player():
             return jsonify({'error': 'Invalid file type. Allowed: png, jpg, jpeg, gif, webp'}), 400
         photo_filename = save_player_photo(photo_file, tenant.id)
     
+    # Handle is_active (defaults to True)
+    is_active = True
+    if 'is_active' in data:
+        is_active_value = data['is_active']
+        if isinstance(is_active_value, str):
+            is_active = is_active_value.lower() in ['true', '1', 'yes']
+        else:
+            is_active = bool(is_active_value)
+
     # Create player
     player = Player(
         name=name,
@@ -212,8 +221,9 @@ def create_player():
         spare_priority=spare_priority,
         photo_filename=photo_filename,
         language=data.get('language', 'en'),
+        is_active=is_active,
         tenant_id=tenant.id
-    )
+)
     
     try:
         db.session.add(player)
@@ -305,7 +315,12 @@ def update_player(player_id):
         player.language = data['language']
     
     if 'is_active' in data:
-        player.is_active = bool(data['is_active'])
+        # Handle both boolean and string values from FormData
+        is_active_value = data['is_active']
+        if isinstance(is_active_value, str):
+            player.is_active = is_active_value.lower() in ['true', '1', 'yes']
+        else:
+            player.is_active = bool(is_active_value)
     
     # Handle photo upload
     if photo_file and photo_file.filename:

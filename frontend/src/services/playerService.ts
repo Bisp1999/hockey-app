@@ -41,6 +41,10 @@ export const playerService = {
       formData.append('spare_priority', data.spare_priority.toString());
     }
     
+    if (data.is_active !== undefined) {  // ADD THIS
+      formData.append('is_active', data.is_active.toString());
+    }
+    
     if (data.photo) {
       formData.append('photo', data.photo);
     }
@@ -62,6 +66,7 @@ export const playerService = {
     if (data.language) formData.append('language', data.language);
     if (data.spare_priority) formData.append('spare_priority', data.spare_priority.toString());
     if (data.photo) formData.append('photo', data.photo);
+    if (data.is_active !== undefined) formData.append('is_active', data.is_active.toString()); 
 
     const response = await apiClient.put(`/players/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
@@ -76,6 +81,6 @@ export const playerService = {
 
   // Delete player photo
   async deletePlayerPhoto(id: number): Promise<void> {
-    await apiClient.delete(`/players/${id}/photo/`);
+    await apiClient.delete(`/players/${id}/photo`);
   }
 };

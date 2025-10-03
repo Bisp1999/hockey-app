@@ -10,7 +10,7 @@ import GameCalendar from './components/Games/GameCalendar';
 import InvitationDashboard from './components/Invitations/InvitationDashboard';
 import StatsDashboard from './components/Statistics/StatsDashboard';
 import AssignmentManager from './components/Assignments/AssignmentManager';
-import TeamConfig from './components/Teams/TeamConfig';
+import TeamSettings from './components/Teams/TeamSettings';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import PlayerProfile from './components/Players/PlayerProfile';
 import './App.css';
@@ -36,7 +36,7 @@ function App() {
                 <Route path="invitations" element={<InvitationDashboard />} />
                 <Route path="statistics" element={<StatsDashboard />} />
                 <Route path="assignments" element={<AssignmentManager />} />
-                <Route path="teams" element={<TeamConfig />} />
+                <Route path="teams" element={<TeamSettings />} />
               </Route>
             </Routes>
           </div>

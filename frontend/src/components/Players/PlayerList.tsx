@@ -25,6 +25,20 @@ const PlayerList: React.FC = () => {
     is_active: 'true'
   });
 
+  // Helper to get the combined type filter value for the dropdown
+  const getTypeFilterValue = () => {
+    if (filters.player_type === 'spare' && filters.spare_priority === '1') {
+      return 'spare_priority_1';
+    }
+    if (filters.player_type === 'spare' && filters.spare_priority === '2') {
+      return 'spare_priority_2';
+    }
+    if (filters.player_type === 'spare' && !filters.spare_priority) {
+      return 'spare';
+    }
+    return filters.player_type;
+  };
+
   useEffect(() => {
     loadPlayers();
   }, [searchTerm, filters]);
@@ -59,7 +73,7 @@ const PlayerList: React.FC = () => {
     if (!window.confirm(`Are you sure you want to delete ${player.name}?`)) {
       return;
     }
-  
+
     try {
       await playerService.deletePlayer(player.id);
       setSuccess(`${player.name} deleted successfully`);  // ADD THIS
@@ -74,13 +88,23 @@ const PlayerList: React.FC = () => {
     setShowForm(false);
     setEditingPlayer(null);
     loadPlayers();
-    
+
     // Show success message if provided
     if (successMessage) {
       setSuccess(successMessage);
       // Auto-hide after 3 seconds
       setTimeout(() => setSuccess(null), 3000);
     }
+  };
+
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setFilters({
+      position: '',
+      player_type: '',
+      spare_priority: '',
+      is_active: 'true'
+    });
   };
 
   const getPositionBadge = (position: string) => {
@@ -139,13 +163,29 @@ const PlayerList: React.FC = () => {
         </select>
 
         <select
-          value={filters.player_type}
-          onChange={(e) => setFilters({ ...filters, player_type: e.target.value })}
+          value={getTypeFilterValue()}
+          onChange={(e) => {
+            const value = e.target.value;
+            // Handle combined type+priority filter
+            if (value === 'spare_priority_1') {
+              setFilters({ ...filters, player_type: 'spare', spare_priority: '1' });
+            } else if (value === 'spare_priority_2') {
+              setFilters({ ...filters, player_type: 'spare', spare_priority: '2' });
+            } else if (value === 'spare') {
+              setFilters({ ...filters, player_type: 'spare', spare_priority: '' });
+            } else if (value === 'regular') {
+              setFilters({ ...filters, player_type: 'regular', spare_priority: '' });
+            } else {
+              setFilters({ ...filters, player_type: '', spare_priority: '' });
+            }
+          }}
           className="filter-select"
         >
           <option value="">All Types</option>
           <option value="regular">Regular</option>
-          <option value="spare">Spare</option>
+          <option value="spare">All Spares</option>
+          <option value="spare_priority_1">Spare - Priority 1</option>
+          <option value="spare_priority_2">Spare - Priority 2</option>
         </select>
 
         <select
@@ -157,6 +197,14 @@ const PlayerList: React.FC = () => {
           <option value="true">Active</option>
           <option value="false">Inactive</option>
         </select>
+        
+        <button 
+          className="btn btn-secondary clear-filters-btn" 
+          onClick={handleClearFilters}
+        >
+          Clear Filters
+        </button>
+
       </div>
 
       {/* Player Table */}
@@ -218,19 +266,19 @@ const PlayerList: React.FC = () => {
                       className="btn btn-sm btn-info"
                       onClick={() => navigate(`/players/${player.id}`)}
                     >
-                    View
+                      View
                     </button>
                     <button
                       className="btn btn-sm btn-secondary"
                       onClick={() => handleEdit(player)}
                     >
-                    Edit
+                      Edit
                     </button>
                     <button
                       className="btn btn-sm btn-danger"
                       onClick={() => handleDelete(player)}
                     >
-                    Delete
+                      Delete
                     </button>
                   </td>
                 </tr>
