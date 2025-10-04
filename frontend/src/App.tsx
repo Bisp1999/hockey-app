@@ -13,6 +13,7 @@ import AssignmentManager from './components/Assignments/AssignmentManager';
 import TeamSettings from './components/Teams/TeamSettings';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import PlayerProfile from './components/Players/PlayerProfile';
+import GamesContainer from './components/Games/GamesContainer';
 import './App.css';
 
 function App() {
@@ -32,10 +33,10 @@ function App() {
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="players" element={<PlayerList />} />
                 <Route path="players/:id" element={<PlayerProfile />} />  
-                <Route path="games" element={<GameList />} />
                 <Route path="invitations" element={<InvitationDashboard />} />
                 <Route path="statistics" element={<StatsDashboard />} />
                 <Route path="assignments" element={<AssignmentManager />} />
+                <Route path="games" element={<GamesContainer />} />
                 <Route path="teams" element={<TeamSettings />} />
               </Route>
             </Routes>

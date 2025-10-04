@@ -1,0 +1,37 @@
+.games-container {
+    width: 100%;
+  }
+  
+  .view-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .toggle-btn {
+    padding: 10px 20px;
+    border: 2px solid #dee2e6;
+    background: white;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .toggle-btn:hover {
+    border-color: #007bff;
+    background: #f8f9fa;
+  }
+  
+  .toggle-btn.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+  }

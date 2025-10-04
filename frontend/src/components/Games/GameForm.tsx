@@ -6,15 +6,16 @@ import './GameForm.css';
 interface GameFormProps {
   game: Game | null;
   onClose: (successMessage?: string) => void;
+  initialDate?: string; // Add this line
 }
 
-const GameForm: React.FC<GameFormProps> = ({ game, onClose }) => {
+const GameForm: React.FC<GameFormProps> = ({ game, onClose, initialDate }) => {
   const { tenant } = useTenant();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<GameFormData>({
-    date: game?.date || '',
+    date: game?.date || initialDate || '',
     time: game?.time || '',
     venue: game?.venue || '',
     status: game?.status || 'scheduled',
