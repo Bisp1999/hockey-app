@@ -14,6 +14,10 @@ export interface Tenant {
   team_color_1: string;
   team_color_2: string;
   assignment_mode: 'manual' | 'automatic';
+  default_goaltenders: number;
+  default_defence?: number;
+  default_forwards?: number;
+  default_skaters?: number;
   created_at: string;
   updated_at: string;
 }

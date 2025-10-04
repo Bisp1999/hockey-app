@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { teamService, TeamConfig } from '../../services/teamService';
+import { useTenant } from '../../contexts/TenantContext';
 import './TeamSettings.css';
 
 const TeamSettings: React.FC = () => {
@@ -7,12 +8,17 @@ const TeamSettings: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const { tenant } = useTenant(); 
   
   const [config, setConfig] = useState<TeamConfig>({
     team_name_1: '',
     team_name_2: '',
     team_color_1: '',
-    team_color_2: ''
+    team_color_2: '',
+    default_goaltenders: 2,
+    default_defence: 4,
+    default_forwards: 6,
+    default_skaters: 10
   });
 
   useEffect(() => {
@@ -143,6 +149,70 @@ const TeamSettings: React.FC = () => {
               />
             </div>
           </div>
+        </div>
+
+        <div className="team-section">
+          <h2>Default Player Requirements</h2>
+          <p className="section-description">
+            Set default player requirements for new games. These values will auto-populate when creating a game.
+          </p>
+
+          <div className="form-group">
+            <label htmlFor="default_goaltenders">Goaltenders *</label>
+            <input
+              type="number"
+              id="default_goaltenders"
+              name="default_goaltenders"
+              value={config.default_goaltenders}
+              onChange={handleChange}
+              required
+              min="0"
+              className="form-control"
+            />
+          </div>
+
+          {tenant?.position_mode === 'three_position' ? (
+            <>
+              <div className="form-group">
+                <label htmlFor="default_defence">Defence</label>
+                <input
+                  type="number"
+                  id="default_defence"
+                  name="default_defence"
+                  value={config.default_defence || ''}
+                  onChange={handleChange}
+                  min="0"
+                  className="form-control"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="default_forwards">Forwards</label>
+                <input
+                  type="number"
+                  id="default_forwards"
+                  name="default_forwards"
+                  value={config.default_forwards || ''}
+                  onChange={handleChange}
+                  min="0"
+                  className="form-control"
+                />
+              </div>
+            </>
+          ) : (
+            <div className="form-group">
+              <label htmlFor="default_skaters">Skaters</label>
+              <input
+                type="number"
+                id="default_skaters"
+                name="default_skaters"
+                value={config.default_skaters || ''}
+                onChange={handleChange}
+                min="0"
+                className="form-control"
+              />
+            </div>
+          )}
         </div>
 
         <div className="form-actions">

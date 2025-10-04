@@ -104,6 +104,17 @@ def create_game():
     team_1_color = data.get('team_1_color', tenant.team_color_1)
     team_2_color = data.get('team_2_color', tenant.team_color_2)
     
+    # Calculate skaters_needed based on position mode
+    defence_needed = data.get('defence_needed')
+    forwards_needed = data.get('forwards_needed')
+    skaters_needed = data.get('skaters_needed')
+
+    # For 3-position mode, calculate skaters from defence + forwards
+    if tenant.position_mode == 'three_position' and defence_needed and forwards_needed:
+        skaters_needed = int(defence_needed) + int(forwards_needed)
+    elif skaters_needed:
+        skaters_needed = int(skaters_needed)
+
     # Create game
     game = Game(
         date=game_date,
@@ -111,9 +122,9 @@ def create_game():
         venue=data['venue'].strip(),
         status=data.get('status', 'scheduled'),
         goaltenders_needed=data.get('goaltenders_needed', 2),
-        defence_needed=data.get('defence_needed'),
-        forwards_needed=data.get('forwards_needed'),
-        skaters_needed=data.get('skaters_needed'),
+        defence_needed=int(defence_needed) if defence_needed else None,
+        forwards_needed=int(forwards_needed) if forwards_needed else None,
+        skaters_needed=skaters_needed,
         team_1_name=team_1_name,
         team_2_name=team_2_name,
         team_1_color=team_1_color,
@@ -166,9 +177,22 @@ def update_game(game_id):
     
     if 'time' in data:
         try:
-            game.time = datetime.fromisoformat(data['time']).time()
-        except (ValueError, TypeError):
-            return jsonify({'error': 'Invalid time format'}), 400
+            # Parse time string (HH:MM:SS format)
+            time_str = data['time']
+            if isinstance(time_str, str):
+                time_parts = time_str.split(':')
+                if len(time_parts) >= 2:
+                    game.time = time_class(
+                        int(time_parts[0]), 
+                        int(time_parts[1]), 
+                        int(time_parts[2]) if len(time_parts) > 2 else 0
+                    )
+                else:
+                    raise ValueError("Invalid time format")
+            else:
+                raise ValueError("Time must be a string")
+        except (ValueError, TypeError) as e:
+            return jsonify({'error': f'Invalid time format: {str(e)}'}), 400
     
     if 'venue' in data:
         venue = data['venue'].strip()

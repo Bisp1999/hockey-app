@@ -20,7 +20,11 @@ def get_team_config():
         'team_name_1': tenant.team_name_1,
         'team_name_2': tenant.team_name_2,
         'team_color_1': tenant.team_color_1,
-        'team_color_2': tenant.team_color_2
+        'team_color_2': tenant.team_color_2,
+        'default_goaltenders': tenant.default_goaltenders,
+        'default_defence': tenant.default_defence,
+        'default_forwards': tenant.default_forwards,
+        'default_skaters': tenant.default_skaters
     })
 
 @teams_bp.route('/config', methods=['PUT'])
@@ -59,6 +63,16 @@ def update_team_config():
             return jsonify({'error': 'Team 2 color cannot be empty'}), 400
         tenant.team_color_2 = color
     
+    # Update default player requirements
+    if 'default_goaltenders' in data:
+        tenant.default_goaltenders = int(data['default_goaltenders'])
+    if 'default_defence' in data:
+        tenant.default_defence = int(data['default_defence']) if data['default_defence'] else None
+    if 'default_forwards' in data:
+        tenant.default_forwards = int(data['default_forwards']) if data['default_forwards'] else None
+    if 'default_skaters' in data:
+        tenant.default_skaters = int(data['default_skaters']) if data['default_skaters'] else None
+
     try:
         db.session.commit()
         return jsonify({
@@ -67,7 +81,11 @@ def update_team_config():
                 'team_name_1': tenant.team_name_1,
                 'team_name_2': tenant.team_name_2,
                 'team_color_1': tenant.team_color_1,
-                'team_color_2': tenant.team_color_2
+                'team_color_2': tenant.team_color_2,
+                'default_goaltenders': tenant.default_goaltenders,
+                'default_defence': tenant.default_defence,
+                'default_forwards': tenant.default_forwards,
+                'default_skaters': tenant.default_skaters
             }
         })
     except Exception as e:

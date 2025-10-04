@@ -141,3 +141,10 @@
     padding: 40px;
     color: #666;
   }
+
+  .section-description {
+    color: #6c757d;
+    font-size: 13px;
+    margin-bottom: 15px;
+    font-style: italic;
+  }

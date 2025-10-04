@@ -26,6 +26,12 @@ class Tenant(db.Model):
     team_color_1 = db.Column(db.String(20), default='blue')
     team_color_2 = db.Column(db.String(20), default='red')
     assignment_mode = db.Column(db.String(20), default='manual', nullable=False)  # 'manual' or 'automatic'
+
+    # Default player requirements for games
+    default_goaltenders = db.Column(db.Integer, default=2, nullable=False)
+    default_defence = db.Column(db.Integer, default=4, nullable=True)  # null for 2-position mode
+    default_forwards = db.Column(db.Integer, default=6, nullable=True)  # null for 2-position mode
+    default_skaters = db.Column(db.Integer, default=10, nullable=True)  # for 2-position mode
     
     # Relationships
     users = db.relationship('User', backref='tenant', lazy=True, cascade='all, delete-orphan')
@@ -83,6 +89,10 @@ class Tenant(db.Model):
             'team_color_1': self.team_color_1,
             'team_color_2': self.team_color_2,
             'assignment_mode': self.assignment_mode,
+            'default_goaltenders': self.default_goaltenders,
+            'default_defence': self.default_defence,
+            'default_forwards': self.default_forwards,
+            'default_skaters': self.default_skaters,
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat(),
             'url': self.get_url()

@@ -5,6 +5,10 @@ export interface TeamConfig {
   team_name_2: string;
   team_color_1: string;
   team_color_2: string;
+  default_goaltenders: number;
+  default_defence?: number;
+  default_forwards?: number;
+  default_skaters?: number;
 }
 
 export const teamService = {

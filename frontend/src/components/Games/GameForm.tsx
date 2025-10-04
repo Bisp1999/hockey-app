@@ -18,10 +18,10 @@ const GameForm: React.FC<GameFormProps> = ({ game, onClose }) => {
     time: game?.time || '',
     venue: game?.venue || '',
     status: game?.status || 'scheduled',
-    goaltenders_needed: game?.goaltenders_needed || 2,
-    defence_needed: game?.defence_needed,
-    forwards_needed: game?.forwards_needed,
-    skaters_needed: game?.skaters_needed,
+    goaltenders_needed: game?.goaltenders_needed || tenant?.default_goaltenders || 2,
+    defence_needed: game?.defence_needed || tenant?.default_defence,
+    forwards_needed: game?.forwards_needed || tenant?.default_forwards,
+    skaters_needed: game?.skaters_needed || tenant?.default_skaters,
     team_1_name: game?.team_1_name || tenant?.team_name_1,
     team_2_name: game?.team_2_name || tenant?.team_name_2,
     team_1_color: game?.team_1_color || tenant?.team_color_1,
@@ -149,23 +149,6 @@ const GameForm: React.FC<GameFormProps> = ({ game, onClose }) => {
               className="form-control"
               placeholder="e.g., Arena Name, Rink 1"
             />
-          </div>
-
-          {/* Status */}
-          <div className="form-group">
-            <label htmlFor="status">Status</label>
-            <select
-              id="status"
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="form-control"
-            >
-              <option value="scheduled">Scheduled</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="cancelled">Cancelled</option>
-              <option value="completed">Completed</option>
-            </select>
           </div>
 
           {/* Player Requirements */}
