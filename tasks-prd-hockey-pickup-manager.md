@@ -107,21 +107,22 @@ Based on the PRD analysis, this is a greenfield project requiring full-stack dev
   - [x] 4.1 Create team model with names and jersey color configuration
   - [x] 4.2 Build team setup interface for admins
   - [x] 4.3 Implement game model with date, time, venue, and player requirements
-  - [ ] 4.4 Create calendar-based game scheduling interface
-  - [ ] 4.5 Add recurring game template functionality
-  - [ ] 4.6 Implement game editing and cancellation features
+  - [x] 4.4 Create calendar-based game scheduling interface
+  - [x] 4.5 Add recurring game template functionality
+  - [x] 4.6 Implement game editing and cancellation features
 
 - [ ] 5.0 Email Invitation and Availability System
-  - [ ] 5.1 Set up Flask-Mail with SMTP configuration
-  - [ ] 5.2 Create bilingual email templates for invitations
-  - [ ] 5.3 Implement invitation model and tracking system
-  - [ ] 5.4 Build automated invitation sending for regular players
-  - [ ] 5.5 Create availability response system (email reply + web link)
-  - [ ] 5.6 Build real-time availability dashboard for admins
-  - [ ] 5.7 Add email preference management for players
-  - [ ] 5.8 Implement player skill rating system for balanced team assignments
-  - [ ] 5.9 Build automatic team assignment algorithm (balanced by skill/position)
-  - [ ] 5.10 Build game details view with team assignments and manual override
+  - [x] 5.1 Set up Flask-Mail with SMTP configuration
+  - [x] 5.2 Create bilingual email templates for invitations
+  - [x] 5.3 Implement invitation model and tracking system
+  - [x] 5.4 Build automated invitation sending for regular players
+  - [x] 5.5 Create availability response system (email reply + web link)
+  - [x] 5.6 Build real-time availability dashboard for admins
+  - [ ] 5.7 Build a simple frontend registration page for tenants
+  - [ ] 5.8 Add email preference management for players
+  - [ ] 5.9 Implement player skill rating system for balanced team assignments
+  - [ ] 5.10 Build automatic team assignment algorithm (balanced by skill/position)
+  - [ ] 5.11 Build game details view with team assignments and manual override
 
 - [ ] 6.0 Intelligent Spare Player Management
   - [ ] 6.1 Implement spare player priority system (Priority 1 and 2)
