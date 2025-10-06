@@ -16,6 +16,7 @@ import PlayerProfile from './components/Players/PlayerProfile';
 import GamesContainer from './components/Games/GamesContainer';
 import GameDetails from './components/Games/GameDetails';
 import InvitationResponse from './components/Invitations/InvitationResponse';
+import TenantRegistration from './components/Auth/TenantRegistration';
 import './App.css';
 
 function App() {
@@ -27,7 +28,10 @@ function App() {
             <Routes>
               {/* Public route for invitation responses - no auth required */}
               <Route path="/invitations/respond/:token" element={<InvitationResponse />} />
-              
+
+              {/* Public route for tenant registration - no auth required */}
+              <Route path="/register" element={<TenantRegistration />} />
+
               <Route path="/login" element={<Login />} />
               <Route path="/" element={
                 <ProtectedRoute>
@@ -43,7 +47,6 @@ function App() {
                 <Route path="assignments" element={<AssignmentManager />} />
                 <Route path="games" element={<GamesContainer />} />
                 <Route path="games/:id" element={<GameDetails />} />
-                <Route path="invitations" element={<InvitationDashboard />} />
                 <Route path="teams" element={<TeamSettings />} />
               </Route>
             </Routes>

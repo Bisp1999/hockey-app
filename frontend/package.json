@@ -1,6 +1,5 @@
 {
   "name": "hockey-pickup-front",
-  "proxy": "http://myteam.localhost:5000",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -62,6 +61,7 @@
     "@types/react-big-calendar": "^1.16.3",
     "@types/react-calendar": "^3.9.0",
     "@typescript-eslint/eslint-plugin": "^8.45.0",
-    "@typescript-eslint/parser": "^8.45.0"
+    "@typescript-eslint/parser": "^8.45.0",
+    "http-proxy-middleware": "^3.0.5"
   }
 }

@@ -4,6 +4,7 @@ Multi-tenant utility functions for tenant context and isolation.
 from flask import request, g, current_app, abort
 from functools import wraps
 from sqlalchemy import text
+import re
 from app import db
 
 def get_current_tenant():
@@ -95,3 +96,35 @@ def validate_tenant_access(model_instance):
         if model_instance.tenant_id != tenant_id:
             abort(403, description="Access denied to this resource")
     return True
+
+def generate_tenant_slug(name):
+    """Generate a URL-safe slug from organization name."""
+    # Convert to lowercase and replace spaces with hyphens
+    slug = name.lower().strip()
+    # Remove special characters except hyphens
+    slug = re.sub(r'[^a-z0-9\-]', '', slug.replace(' ', '-'))
+    # Remove multiple consecutive hyphens
+    slug = re.sub(r'-+', '-', slug)
+    # Remove leading/trailing hyphens
+    slug = slug.strip('-')
+    return slug
+
+def validate_subdomain(subdomain):
+    """Validate subdomain format and availability."""
+    # Check length
+    if len(subdomain) < 3:
+        return False, "Subdomain must be at least 3 characters long"
+    
+    if len(subdomain) > 63:
+        return False, "Subdomain must be less than 63 characters"
+    
+    # Check format (alphanumeric and hyphens only, must start/end with alphanumeric)
+    if not re.match(r'^[a-z0-9][a-z0-9\-]*[a-z0-9]$', subdomain):
+        return False, "Subdomain must contain only lowercase letters, numbers, and hyphens, and must start and end with a letter or number"
+    
+    # Check for reserved subdomains
+    reserved = ['www', 'api', 'admin', 'app', 'mail', 'ftp', 'localhost', 'staging', 'dev', 'test']
+    if subdomain in reserved:
+        return False, f"'{subdomain}' is a reserved subdomain"
+    
+    return True, "Valid subdomain"

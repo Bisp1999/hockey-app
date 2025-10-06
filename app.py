@@ -32,6 +32,11 @@ def create_app(config_name='development'):
     """Application factory pattern for Flask app creation."""
     import os  # Add this line
     
+    import logging
+
+    # Disable SQLAlchemy SQL logging
+    logging.getLogger('sqlalchemy.engine').setLevel(logging.WARNING)
+
     app = Flask(__name__)
     app.config.from_object(config[config_name]) 
     
@@ -94,8 +99,10 @@ def create_app(config_name='development'):
     from routes.statistics import statistics_bp
     from routes.assignments import assignments_bp
     from routes.tenants import tenants_bp
+    from routes.tenant_onboarding import onboarding_bp
     from routes.teams import teams_bp
     
+    # Register blueprints with /api prefix (for direct access)
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(players_bp, url_prefix='/api/players')
     app.register_blueprint(games_bp, url_prefix='/api/games')
@@ -103,6 +110,7 @@ def create_app(config_name='development'):
     app.register_blueprint(statistics_bp, url_prefix='/api/statistics')
     app.register_blueprint(assignments_bp, url_prefix='/api/assignments')
     app.register_blueprint(tenants_bp, url_prefix='/api/tenant')
+    app.register_blueprint(onboarding_bp, url_prefix='/api/onboarding')
     app.register_blueprint(teams_bp, url_prefix='/api/teams')
     
     # CSRF error handler (JSON response for API)
