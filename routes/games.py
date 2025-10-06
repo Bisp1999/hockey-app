@@ -3,7 +3,7 @@ Game scheduling and management API endpoints.
 """
 from flask import Blueprint, request, jsonify, current_app
 from flask_login import login_required
-from datetime import datetime, date, time as time_class
+from datetime import datetime, date, time as time_class, timedelta
 from models.game import Game
 from models.tenant import Tenant
 from utils.tenant import get_current_tenant
@@ -15,8 +15,41 @@ from flask_limiter.util import get_remote_address
 games_bp = Blueprint('games', __name__)
 limiter = Limiter(key_func=get_remote_address)
 
+def generate_recurring_games(base_game_data, start_date, end_date, pattern, tenant_id):
+    """Generate recurring games based on pattern."""
+    games = []
+    current_date = start_date
+    
+    # Determine interval
+    interval = timedelta(days=7) if pattern == 'weekly' else timedelta(days=14)
+    
+    while current_date <= end_date:
+        game = Game(
+            date=current_date,
+            time=base_game_data['time'],
+            venue=base_game_data['venue'],
+            status=base_game_data.get('status', 'scheduled'),
+            goaltenders_needed=base_game_data.get('goaltenders_needed', 2),
+            defence_needed=base_game_data.get('defence_needed'),
+            forwards_needed=base_game_data.get('forwards_needed'),
+            skaters_needed=base_game_data.get('skaters_needed'),
+            team_1_name=base_game_data.get('team_1_name'),
+            team_2_name=base_game_data.get('team_2_name'),
+            team_1_color=base_game_data.get('team_1_color'),
+            team_2_color=base_game_data.get('team_2_color'),
+            is_recurring=True,
+            recurrence_pattern=pattern,
+            recurrence_end_date=end_date,
+            tenant_id=tenant_id
+        )
+        games.append(game)
+        current_date += interval
+    
+    return games
+
 @games_bp.route('/', methods=['GET'])
 @login_required
+
 def get_games():
     """Get all games for current tenant with optional filtering."""
     tenant = get_current_tenant()
@@ -116,36 +149,86 @@ def create_game():
         skaters_needed = int(skaters_needed)
 
     # Create game
-    game = Game(
-        date=game_date,
-        time=game_time,
-        venue=data['venue'].strip(),
-        status=data.get('status', 'scheduled'),
-        goaltenders_needed=data.get('goaltenders_needed', 2),
-        defence_needed=int(defence_needed) if defence_needed else None,
-        forwards_needed=int(forwards_needed) if forwards_needed else None,
-        skaters_needed=skaters_needed,
-        team_1_name=team_1_name,
-        team_2_name=team_2_name,
-        team_1_color=team_1_color,
-        team_2_color=team_2_color,
-        is_recurring=data.get('is_recurring', False),
-        recurrence_pattern=data.get('recurrence_pattern'),
-        recurrence_end_date=data.get('recurrence_end_date'),
-        tenant_id=tenant.id
-    )
+    if data.get('is_recurring') and data.get('recurrence_pattern') and data.get('recurrence_end_date'):
+        # Generate recurring games
+        try:
+            recurrence_end = datetime.fromisoformat(data['recurrence_end_date']).date()
+        except (ValueError, TypeError):
+            return jsonify({'error': 'Invalid recurrence end date format'}), 400
     
-    try:
-        db.session.add(game)
-        db.session.commit()
-        return jsonify({
-            'message': 'Game created successfully',
-            'game': game.to_dict()
-        }), 201
-    except Exception as e:
-        db.session.rollback()
-        current_app.logger.error(f"Failed to create game: {e}")
-        return jsonify({'error': 'Failed to create game'}), 500
+        if recurrence_end < game_date:
+            return jsonify({'error': 'Recurrence end date must be after start date'}), 400
+    
+        # Prepare base game data
+        base_game_data = {
+            'time': game_time,
+            'venue': data['venue'].strip(),
+            'status': data.get('status', 'scheduled'),
+            'goaltenders_needed': data.get('goaltenders_needed', 2),
+            'defence_needed': int(defence_needed) if defence_needed else None,
+            'forwards_needed': int(forwards_needed) if forwards_needed else None,
+            'skaters_needed': skaters_needed,
+            'team_1_name': team_1_name,
+            'team_2_name': team_2_name,
+            'team_1_color': team_1_color,
+            'team_2_color': team_2_color
+        }
+    
+        # Generate all recurring games
+        games = generate_recurring_games(
+            base_game_data,
+            game_date,
+            recurrence_end,
+            data['recurrence_pattern'],
+            tenant.id
+        )
+    
+        try:
+            for game in games:
+                db.session.add(game)
+            db.session.commit()
+        
+            return jsonify({
+                'message': f'{len(games)} recurring games created successfully',
+                'games': [g.to_dict() for g in games],
+                'count': len(games)
+            }), 201
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Failed to create recurring games: {e}")
+            return jsonify({'error': 'Failed to create recurring games'}), 500
+    else:
+        # Create single game
+        game = Game(
+            date=game_date,
+            time=game_time,
+            venue=data['venue'].strip(),
+            status=data.get('status', 'scheduled'),
+            goaltenders_needed=data.get('goaltenders_needed', 2),
+            defence_needed=int(defence_needed) if defence_needed else None,
+            forwards_needed=int(forwards_needed) if forwards_needed else None,
+            skaters_needed=skaters_needed,
+            team_1_name=team_1_name,
+            team_2_name=team_2_name,
+            team_1_color=team_1_color,
+            team_2_color=team_2_color,
+            is_recurring=False,
+            recurrence_pattern=None,
+            recurrence_end_date=None,
+            tenant_id=tenant.id
+        )
+    
+        try:
+            db.session.add(game)
+            db.session.commit()
+            return jsonify({
+                'message': 'Game created successfully',
+                'game': game.to_dict()
+            }), 201
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Failed to create game: {e}")
+            return jsonify({'error': 'Failed to create game'}), 500
 
 @games_bp.route('/<int:game_id>', methods=['GET'])
 @login_required

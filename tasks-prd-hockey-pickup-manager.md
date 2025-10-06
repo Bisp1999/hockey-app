@@ -104,13 +104,12 @@ Based on the PRD analysis, this is a greenfield project requiring full-stack dev
   - [x] 3.7 Create player profile view with statistics summary
 
 - [ ] 4.0 Team Configuration and Game Scheduling
-  - [ ] 4.1 Create team model with names and jersey color configuration
-  - [ ] 4.2 Build team setup interface for admins
-  - [ ] 4.3 Implement game model with date, time, venue, and player requirements
+  - [x] 4.1 Create team model with names and jersey color configuration
+  - [x] 4.2 Build team setup interface for admins
+  - [x] 4.3 Implement game model with date, time, venue, and player requirements
   - [ ] 4.4 Create calendar-based game scheduling interface
   - [ ] 4.5 Add recurring game template functionality
   - [ ] 4.6 Implement game editing and cancellation features
-  - [ ] 4.7 Build game details view with team assignments
 
 - [ ] 5.0 Email Invitation and Availability System
   - [ ] 5.1 Set up Flask-Mail with SMTP configuration
@@ -120,6 +119,9 @@ Based on the PRD analysis, this is a greenfield project requiring full-stack dev
   - [ ] 5.5 Create availability response system (email reply + web link)
   - [ ] 5.6 Build real-time availability dashboard for admins
   - [ ] 5.7 Add email preference management for players
+  - [ ] 5.8 Implement player skill rating system for balanced team assignments
+  - [ ] 5.9 Build automatic team assignment algorithm (balanced by skill/position)
+  - [ ] 5.10 Build game details view with team assignments and manual override
 
 - [ ] 6.0 Intelligent Spare Player Management
   - [ ] 6.1 Implement spare player priority system (Priority 1 and 2)

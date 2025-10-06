@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { gameService, Game } from '../../services/gameService';
 import GameForm from './GameForm';
+import { useNavigate } from 'react-router-dom';
 import './GameList.css';
 
 const GameList: React.FC = () => {
@@ -10,7 +11,8 @@ const GameList: React.FC = () => {
   const [success, setSuccess] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [editingGame, setEditingGame] = useState<Game | null>(null);
-  
+  const navigate = useNavigate();
+
   const [filters, setFilters] = useState({
     status: '',
     start_date: '',
@@ -64,11 +66,25 @@ const GameList: React.FC = () => {
     }
   };
 
+  const handleCancelGame = async (game: Game) => {
+    if (!window.confirm(`Are you sure you want to cancel the game on ${game.date} at ${game.time}?`)) {
+      return;
+    }
+
+    try {
+      await gameService.updateGame(game.id, { status: 'cancelled' });
+      setSuccess(`Game on ${game.date} cancelled successfully`);
+      loadGames();
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to cancel game');
+    }
+  };
+
   const handleFormClose = (successMessage?: string) => {
     setShowForm(false);
     setEditingGame(null);
     loadGames();
-    
+
     if (successMessage) {
       setSuccess(successMessage);
     }
@@ -86,11 +102,11 @@ const GameList: React.FC = () => {
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'short', 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
     });
   };
 
@@ -149,8 +165,8 @@ const GameList: React.FC = () => {
           placeholder="End Date"
         />
 
-        <button 
-          className="btn btn-secondary" 
+        <button
+          className="btn btn-secondary"
           onClick={() => setFilters({ status: '', start_date: '', end_date: '' })}
         >
           Clear Filters
@@ -196,11 +212,27 @@ const GameList: React.FC = () => {
                   </td>
                   <td className="actions-cell">
                     <button
+                      className="btn btn-sm btn-primary"
+                      onClick={() => navigate(`/games/${game.id}`)}
+                    >
+                      View
+                    </button>
+                    <button
                       className="btn btn-sm btn-secondary"
                       onClick={() => handleEdit(game)}
                     >
                       Edit
                     </button>
+
+                    {game.status !== 'cancelled' && game.status !== 'completed' && (
+                      <button
+                        className="btn btn-sm btn-warning"
+                        onClick={() => handleCancelGame(game)}
+                      >
+                        Cancel
+                      </button>
+                    )}
+
                     <button
                       className="btn btn-sm btn-danger"
                       onClick={() => handleDelete(game)}

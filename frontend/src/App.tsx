@@ -14,6 +14,7 @@ import TeamSettings from './components/Teams/TeamSettings';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import PlayerProfile from './components/Players/PlayerProfile';
 import GamesContainer from './components/Games/GamesContainer';
+import GameDetails from './components/Games/GameDetails';
 import './App.css';
 
 function App() {
@@ -32,11 +33,13 @@ function App() {
                 <Route index element={<Navigate to="/dashboard" replace />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="players" element={<PlayerList />} />
-                <Route path="players/:id" element={<PlayerProfile />} />  
+                <Route path="players/:id" element={<PlayerProfile />} />
                 <Route path="invitations" element={<InvitationDashboard />} />
                 <Route path="statistics" element={<StatsDashboard />} />
                 <Route path="assignments" element={<AssignmentManager />} />
                 <Route path="games" element={<GamesContainer />} />
+                <Route path="games/:id" element={<GameDetails />} />
+                <Route path="invitations" element={<InvitationDashboard />} />
                 <Route path="teams" element={<TeamSettings />} />
               </Route>
             </Routes>

@@ -35,7 +35,7 @@ const GameForm: React.FC<GameFormProps> = ({ game, onClose, initialDate }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
-    
+
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
@@ -46,7 +46,7 @@ const GameForm: React.FC<GameFormProps> = ({ game, onClose, initialDate }) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-  
+
     try {
       // Validate required fields
       if (!formData.date) {
@@ -64,24 +64,24 @@ const GameForm: React.FC<GameFormProps> = ({ game, onClose, initialDate }) => {
         setLoading(false);
         return;
       }
-  
+
       // Format time to include seconds (HTML time input returns HH:MM)
       let formattedTime = formData.time.trim();
       const timeParts = formattedTime.split(':');
       if (timeParts.length === 2) {
         formattedTime = `${formattedTime}:00`;
       }
-  
+
       // Ensure date is in YYYY-MM-DD format
       const submitData = {
         ...formData,
         date: formData.date,
         time: formattedTime
       };
-  
+
       console.log('Submitting data:', submitData);
       console.log('Time value:', formattedTime);
-  
+
       if (game) {
         await gameService.updateGame(game.id, submitData);
         onClose(`Game on ${formData.date} updated successfully`);
@@ -152,6 +152,27 @@ const GameForm: React.FC<GameFormProps> = ({ game, onClose, initialDate }) => {
             />
           </div>
 
+          {game && (
+            <div className="form-group">
+              <label htmlFor="status">Status *</label>
+              <select
+                id="status"
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                required
+                className="form-control"
+              >
+                <option value="scheduled">Scheduled</option>
+                <option value="cancelled">Cancelled</option>
+                <option value="completed">Completed</option>
+              </select>
+              <small className="form-help">
+                Change status to reactivate cancelled games or mark as completed
+              </small>
+            </div>
+          )}
+
           {/* Player Requirements */}
           <h3>Player Requirements</h3>
           <div className="form-row">
@@ -211,6 +232,55 @@ const GameForm: React.FC<GameFormProps> = ({ game, onClose, initialDate }) => {
               </div>
             )}
           </div>
+
+          {/* Recurring Game Options */}
+          <h3>Recurring Game</h3>
+          <div className="form-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                name="is_recurring"
+                checked={formData.is_recurring}
+                onChange={handleChange}
+              />
+              <span>Make this a recurring game</span>
+            </label>
+          </div>
+
+          {formData.is_recurring && (
+            <>
+              <div className="form-group">
+                <label htmlFor="recurrence_pattern">Repeat</label>
+                <select
+                  id="recurrence_pattern"
+                  name="recurrence_pattern"
+                  value={formData.recurrence_pattern || ''}
+                  onChange={handleChange}
+                  required
+                  className="form-control"
+                >
+                  <option value="">Select frequency</option>
+                  <option value="weekly">Weekly (every 7 days)</option>
+                  <option value="biweekly">Bi-weekly (every 14 days)</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="recurrence_end_date">Repeat Until</label>
+                <input
+                  type="date"
+                  id="recurrence_end_date"
+                  name="recurrence_end_date"
+                  value={formData.recurrence_end_date || ''}
+                  onChange={handleChange}
+                  required
+                  className="form-control"
+                  min={formData.date}
+                />
+                <small className="form-help">Games will be created up to this date</small>
+              </div>
+            </>
+          )}
 
           {/* Form Actions */}
           <div className="form-actions">

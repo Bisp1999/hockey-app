@@ -27,6 +27,62 @@ interface CalendarEvent {
   resource: Game;
 }
 
+interface CustomEventProps {
+  event: CalendarEvent;
+  onEdit: (game: Game) => void;
+  onCancel: (game: Game) => void;
+  onDelete: (game: Game) => void;
+}
+
+const CustomEvent: React.FC<CustomEventProps> = ({ event, onEdit, onCancel, onDelete }) => {
+  const [showActions, setShowActions] = useState(false);
+
+  return (
+    <div 
+      className="custom-event"
+      onMouseEnter={() => setShowActions(true)}
+      onMouseLeave={() => setShowActions(false)}
+    >
+      <div className="event-title">{event.title}</div>
+      {showActions && (
+        <div className="event-actions">
+          <button
+            className="event-btn event-btn-edit"
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(event.resource);
+            }}
+            title="Edit"
+          >
+            ✏️
+          </button>
+          {event.resource.status !== 'cancelled' && event.resource.status !== 'completed' && (
+            <button
+              className="event-btn event-btn-cancel"
+              onClick={(e) => {
+                e.stopPropagation();
+                onCancel(event.resource);
+              }}
+              title="Cancel"
+            >
+              🚫
+            </button>
+          )}
+          <button
+            className="event-btn event-btn-delete"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(event.resource);
+            }}
+            title="Delete"
+          >
+            🗑️
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
 const GameCalendar: React.FC = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -100,6 +156,34 @@ const GameCalendar: React.FC = () => {
     setShowForm(true);
   }, []);
 
+  const handleDelete = async (game: Game) => {
+    if (!window.confirm(`Are you sure you want to delete the game on ${game.date} at ${game.time}?`)) {
+      return;
+    }
+  
+    try {
+      await gameService.deleteGame(game.id);
+      setSuccess(`Game on ${game.date} deleted successfully`);
+      loadGames();
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to delete game');
+    }
+  };
+
+  const handleCancel = async (game: Game) => {
+    if (!window.confirm(`Are you sure you want to cancel the game on ${game.date} at ${game.time}?`)) {
+      return;
+    }
+  
+    try {
+      await gameService.updateGame(game.id, { status: 'cancelled' });
+      setSuccess(`Game on ${game.date} cancelled successfully`);
+      loadGames();
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to cancel game');
+    }
+  };
+  
   const handleFormClose = (successMessage?: string) => {
     setShowForm(false);
     setEditingGame(null);
@@ -176,6 +260,19 @@ const GameCalendar: React.FC = () => {
           onNavigate={setDate}
           eventPropGetter={eventStyleGetter}
           popup
+          components={{
+            event: (props) => (
+              <CustomEvent
+                event={props.event}
+                onEdit={(game) => {
+                  setEditingGame(game);
+                  setShowForm(true);
+                }}
+                onCancel={handleCancel}
+                onDelete={handleDelete}
+              />
+            )
+          }}
         />
       </div>
 

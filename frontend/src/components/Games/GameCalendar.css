@@ -152,4 +152,53 @@
     color: #666;
   }
 
- 
+  .custom-event {
+    position: relative;
+    height: 100%;
+    padding: 2px 5px;
+  }
+  
+  .event-title {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .event-actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    gap: 2px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 2px;
+    border-radius: 3px;
+    z-index: 10;
+  }
+  
+  .event-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px 4px;
+    line-height: 1;
+    transition: transform 0.2s;
+  }
+  
+  .event-btn:hover {
+    transform: scale(1.2);
+  }
+  
+  .event-btn-edit:hover {
+    filter: brightness(1.5);
+  }
+  
+  .event-btn-cancel:hover {
+    filter: brightness(1.5);
+  }
+  
+  .event-btn-delete:hover {
+    filter: brightness(1.5);
+  }

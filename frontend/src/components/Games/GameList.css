@@ -165,4 +165,15 @@
     padding: 40px;
     color: #666;
   }
+
+  .btn-warning {
+    background-color: #ffc107;
+    color: #000;
+    border: 1px solid #ffc107;
+  }
+  
+  .btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+  }
   

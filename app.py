@@ -1,6 +1,11 @@
 """
 Main Flask application entry point with multi-tenant configuration.
 """
+from load_env import load_environment
+
+# Load environment FIRST, before any other imports that might use it
+load_environment()
+
 from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -11,7 +16,6 @@ from flask_wtf.csrf import CSRFProtect, CSRFError
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from config import config
-from load_env import load_environment
 
 # Initialize extensions
 db = SQLAlchemy()
@@ -26,11 +30,26 @@ limiter = Limiter(
 
 def create_app(config_name='development'):
     """Application factory pattern for Flask app creation."""
-    # Load environment variables first
-    load_environment()
+    import os  # Add this line
     
     app = Flask(__name__)
-    app.config.from_object(config[config_name])
+    app.config.from_object(config[config_name]) 
+    
+    # Override config from environment variables (ensures env vars take precedence)
+    env_overrides = {
+        'MAIL_SERVER': os.getenv('MAIL_SERVER'),
+        'MAIL_PORT': int(os.getenv('MAIL_PORT', 587)) if os.getenv('MAIL_PORT') else None,
+        'MAIL_USE_TLS': os.getenv('MAIL_USE_TLS', '').lower() == 'true' if os.getenv('MAIL_USE_TLS') else None,
+        'MAIL_USE_SSL': os.getenv('MAIL_USE_SSL', '').lower() == 'true' if os.getenv('MAIL_USE_SSL') else None,
+        'MAIL_USERNAME': os.getenv('MAIL_USERNAME'),
+        'MAIL_PASSWORD': os.getenv('MAIL_PASSWORD'),
+        'MAIL_DEFAULT_SENDER': os.getenv('MAIL_DEFAULT_SENDER') or os.getenv('MAIL_USERNAME'),
+    }
+    
+    # Apply non-None overrides
+    for key, value in env_overrides.items():
+        if value is not None:
+            app.config[key] = value
 
     # Enable CORS for frontend
     CORS(app, resources={
@@ -65,6 +84,10 @@ def create_app(config_name='development'):
     # Initialize tenant middleware
     from utils.middleware import TenantMiddleware
     TenantMiddleware(app)
+    
+    # Initialize email test blueprint
+    from routes.email_test import email_test_bp
+    app.register_blueprint(email_test_bp, url_prefix='/api/email')
     
     # Register blueprints
     from routes.auth import auth_bp

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitation au match</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4; padding: 20px;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #0066cc 0%, #004999 100%); padding: 30px; text-align: center;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 28px;">🏒 Invitation au match</h1>
+                        </td>
+                    </tr>
+                    
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <p style="margin: 0 0 20px; font-size: 16px; color: #333;">Bonjour <strong>{{ player_name }}</strong>,</p>
+                            
+                            <p style="margin: 0 0 30px; font-size: 16px; color: #333;">Vous êtes invité(e) au match suivant :</p>
+                            
+                            <!-- Game Details Box -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8f9fa; border-radius: 6px; margin-bottom: 30px;">
+                                <tr>
+                                    <td style="padding: 25px;">
+                                        <table width="100%" cellpadding="8" cellspacing="0">
+                                            <tr>
+                                                <td style="font-weight: 600; color: #666; font-size: 14px; width: 100px;">📅 Date :</td>
+                                                <td style="color: #333; font-size: 16px; font-weight: 500;">{{ game_date }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight: 600; color: #666; font-size: 14px;">🕐 Heure :</td>
+                                                <td style="color: #333; font-size: 16px; font-weight: 500;">{{ game_time }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight: 600; color: #666; font-size: 14px;">📍 Lieu :</td>
+                                                <td style="color: #333; font-size: 16px; font-weight: 500;">{{ venue }}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <p style="margin: 0 0 25px; font-size: 16px; color: #333;">Veuillez confirmer votre disponibilité :</p>
+                            
+                            <!-- Action Buttons -->
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td align="center" style="padding: 10px;">
+                                        <a href="{{ confirm_url }}" style="display: inline-block; padding: 14px 40px; background-color: #28a745; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: 600; font-size: 16px;">✓ Je suis disponible</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center" style="padding: 10px;">
+                                        <a href="{{ decline_url }}" style="display: inline-block; padding: 14px 40px; background-color: #dc3545; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: 600; font-size: 16px;">✗ Je ne peux pas</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f8f9fa; padding: 20px 30px; text-align: center; border-top: 1px solid #e9ecef;">
+                            <p style="margin: 0; font-size: 12px; color: #666;">
+                                Hockey Pickup Manager<br>
+                                <a href="{{ tenant_url }}" style="color: #0066cc; text-decoration: none;">Voir les détails du match</a>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -9,7 +9,7 @@ from .user import User
 from .player import Player
 from .team import Team
 from .game import Game
-from .invitation import Invitation, InvitationResponse
+from .invitation import Invitation
 from .statistics import GameStatistic, PlayerStatistic
 from .assignment import Assignment
 
@@ -20,7 +20,6 @@ __all__ = [
     'Team',
     'Game',
     'Invitation',
-    'InvitationResponse',
     'GameStatistic',
     'PlayerStatistic',
     'Assignment'

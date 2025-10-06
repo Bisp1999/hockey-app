@@ -69,6 +69,9 @@ class TenantMiddleware:
             '/favicon.ico',
             '/static/',
             '/_debug_toolbar/',
+            '/api/email/test-simple',
+            '/api/email/test-invitation', 
+            '/api/invitations/respond/',  
         ]
         
         # Skip for static files and health checks
