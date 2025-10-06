@@ -44,7 +44,7 @@ class Player(TenantMixin, db.Model):
     __table_args__ = (db.UniqueConstraint('email', 'tenant_id', name='unique_player_email_per_tenant'),)
     
     # Relationships
-    invitations = db.relationship('Invitation', backref='player', lazy=True, cascade='all, delete-orphan')
+    invitations = db.relationship('Invitation', back_populates='player', lazy=True, cascade='all, delete-orphan')
     statistics = db.relationship('PlayerStatistic', backref='player', lazy=True, cascade='all, delete-orphan')
     assignments = db.relationship('Assignment', backref='player', lazy=True, cascade='all, delete-orphan')
     
@@ -72,6 +72,11 @@ class Player(TenantMixin, db.Model):
     def is_goaltender(self):
         """Check if player is a goaltender."""
         return self.position == POSITION_GOALTENDER
+    
+    @property
+    def preferred_language(self):
+        """Alias for language field (used in email service)."""
+        return self.language
     
     def to_dict(self, include_photo_url=True):
         """Convert player to dictionary."""

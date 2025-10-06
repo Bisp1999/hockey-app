@@ -1,0 +1,210 @@
+.invitation-response-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  .invitation-card,
+  .success-card,
+  .error-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    width: 100%;
+    padding: 40px;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .header h1 {
+    color: #333;
+    margin: 0;
+    font-size: 28px;
+  }
+  
+  .game-details {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .game-details h2 {
+    color: #667eea;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 20px;
+  }
+  
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .detail-row:last-child {
+    border-bottom: none;
+  }
+  
+  .detail-row .label {
+    font-weight: 600;
+    color: #666;
+  }
+  
+  .detail-row .value {
+    color: #333;
+    text-align: right;
+  }
+  
+  .response-form h3 {
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .response-options {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+  }
+  
+  .response-btn {
+    flex: 1;
+    min-width: 150px;
+    padding: 15px 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .response-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .response-btn.available.selected {
+    background: #10b981;
+    color: white;
+    border-color: #10b981;
+  }
+  
+  .response-btn.unavailable.selected {
+    background: #ef4444;
+    color: white;
+    border-color: #ef4444;
+  }
+  
+  .response-btn.tentative.selected {
+    background: #f59e0b;
+    color: white;
+    border-color: #f59e0b;
+  }
+  
+  .notes-section {
+    margin-bottom: 25px;
+  }
+  
+  .notes-section label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .notes-section textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+  }
+  
+  .notes-section textarea:focus {
+    outline: none;
+    border-color: #667eea;
+  }
+  
+  .submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .submit-btn:hover:not(:disabled) {
+    background: #5568d3;
+  }
+  
+  .submit-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .error-message {
+    background: #fee2e2;
+    color: #dc2626;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  .success-card h2,
+  .error-card h2 {
+    color: #333;
+    margin-top: 0;
+    text-align: center;
+  }
+  
+  .success-card p,
+  .error-card p {
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+  }
+  
+  .game-summary,
+  .response-summary {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  .game-summary h3 {
+    margin-top: 0;
+    color: #667eea;
+  }
+  
+  .game-summary p,
+  .response-summary p {
+    text-align: left;
+    margin: 8px 0;
+  }
+  
+  .loading {
+    text-align: center;
+    color: white;
+    font-size: 18px;
+    padding: 40px;
+  }

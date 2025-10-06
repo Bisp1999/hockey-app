@@ -15,6 +15,7 @@ import ProtectedRoute from './components/Auth/ProtectedRoute';
 import PlayerProfile from './components/Players/PlayerProfile';
 import GamesContainer from './components/Games/GamesContainer';
 import GameDetails from './components/Games/GameDetails';
+import InvitationResponse from './components/Invitations/InvitationResponse';
 import './App.css';
 
 function App() {
@@ -24,6 +25,9 @@ function App() {
         <TenantProvider>
           <div className="App">
             <Routes>
+              {/* Public route for invitation responses - no auth required */}
+              <Route path="/invitations/respond/:token" element={<InvitationResponse />} />
+              
               <Route path="/login" element={<Login />} />
               <Route path="/" element={
                 <ProtectedRoute>

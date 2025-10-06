@@ -19,6 +19,11 @@ class TenantMiddleware:
         app.after_request(self.after_request)
     
     def before_request(self):
+                
+        # Skip OPTIONS requests (CORS preflight)
+        if request.method == 'OPTIONS':
+            return
+        
         """Process tenant context before each request."""
         # Skip tenant processing for certain paths
         if self.should_skip_tenant_processing():
@@ -72,6 +77,10 @@ class TenantMiddleware:
             '/api/email/test-simple',
             '/api/email/test-invitation', 
             '/api/invitations/respond/',  
+            '/api/auth/me',  # Add this - allow checking auth status
+            '/api/auth/csrf-token',  # Add this too
+            '/api/auth/login',  # Add this - allow login without tenant context first
+            '/api/auth/logout',  # Add this too
         ]
         
         # Skip for static files and health checks

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, Tenant, AuthContextType } from '../types';
 import { apiClient } from '../utils/api';
+import { API_ENDPOINTS } from '../utils/constants';
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -19,7 +20,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await apiClient.get('/auth/me');
+      const response = await apiClient.get(API_ENDPOINTS.AUTH.ME);
       if (response.data.user) {
         setUser(response.data.user);
         // Set tenant from response
@@ -38,7 +39,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      const response = await apiClient.post('/auth/login', { email, password });
+      const response = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, { email, password });
       if (response.data.user) {
         setUser(response.data.user);
         // Set tenant from login response
@@ -56,7 +57,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
-      await apiClient.post('/auth/logout');
+      await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
     } catch (error) {
       console.error('Logout error:', error);
     } finally {

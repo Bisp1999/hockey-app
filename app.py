@@ -51,16 +51,13 @@ def create_app(config_name='development'):
         if value is not None:
             app.config[key] = value
 
-    # Enable CORS for frontend
-    CORS(app, resources={
-        r"/api/*": {
-            "origins": ["http://localhost:3000", "http://myteam.localhost:3000"],
-            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-            "allow_headers": ["Content-Type", "Authorization", "X-CSRFToken"],
-            "supports_credentials": True,
-            "expose_headers": ["Content-Type", "X-CSRFToken"]
-        }
-    })
+    # Enable CORS for frontend (development)
+    CORS(app, 
+         origins=["http://localhost:3000", "http://myteam.localhost:3000"],
+         supports_credentials=True,
+         allow_headers=["Content-Type", "Authorization", "X-CSRFToken"],
+         expose_headers=["Content-Type", "X-CSRFToken"],
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"])
     
     # Initialize extensions with app
     db.init_app(app)

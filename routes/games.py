@@ -9,6 +9,8 @@ from models.tenant import Tenant
 from utils.tenant import get_current_tenant
 from utils.decorators import tenant_admin_required
 from app import db
+from services.invitation_service import InvitationService
+
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
@@ -187,12 +189,28 @@ def create_game():
             for game in games:
                 db.session.add(game)
             db.session.commit()
-        
-            return jsonify({
+            
+            # Auto-send invitations to regular players for each game if enabled
+            auto_invite = data.get('auto_invite_regular_players', True)
+            total_invitations = {'sent': 0, 'failed': 0}
+            
+            if auto_invite:
+                for game in games:
+                    summary = InvitationService.auto_invite_regular_players(game.id)
+                    total_invitations['sent'] += summary.get('sent', 0)
+                    total_invitations['failed'] += summary.get('failed', 0)
+                current_app.logger.info(f"Auto-invited regular players for {len(games)} games: {total_invitations}")
+            
+            response_data = {
                 'message': f'{len(games)} recurring games created successfully',
                 'games': [g.to_dict() for g in games],
                 'count': len(games)
-            }), 201
+            }
+            
+            if auto_invite:
+                response_data['invitations'] = total_invitations
+            
+            return jsonify(response_data), 201
         except Exception as e:
             db.session.rollback()
             current_app.logger.error(f"Failed to create recurring games: {e}")
@@ -221,10 +239,24 @@ def create_game():
         try:
             db.session.add(game)
             db.session.commit()
-            return jsonify({
+            
+            # Auto-send invitations to regular players if enabled
+            auto_invite = data.get('auto_invite_regular_players', True)
+            invitation_summary = None
+            
+            if auto_invite:
+                invitation_summary = InvitationService.auto_invite_regular_players(game.id)
+                current_app.logger.info(f"Auto-invited regular players: {invitation_summary}")
+            
+            response_data = {
                 'message': 'Game created successfully',
                 'game': game.to_dict()
-            }), 201
+            }
+            
+            if invitation_summary:
+                response_data['invitations'] = invitation_summary
+            
+            return jsonify(response_data), 201
         except Exception as e:
             db.session.rollback()
             current_app.logger.error(f"Failed to create game: {e}")

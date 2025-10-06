@@ -50,8 +50,8 @@ class Invitation(TenantMixin, db.Model):
     player_id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False, index=True)
     
     # Relationships
-    game = db.relationship('Game', backref=db.backref('invitations', lazy='dynamic'))
-    player = db.relationship('Player', backref=db.backref('invitations', lazy='dynamic'))
+    game = db.relationship('Game', back_populates='invitations')
+    player = db.relationship('Player', back_populates='invitations')
     
     # Unique constraint: one invitation per player per game
     __table_args__ = (

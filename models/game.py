@@ -41,7 +41,7 @@ class Game(TenantMixin, db.Model):
     # tenant_id is inherited from TenantMixin
     
     # Relationships
-    invitations = db.relationship('Invitation', backref='game', lazy=True, cascade='all, delete-orphan')
+    invitations = db.relationship('Invitation', back_populates='game', lazy=True, cascade='all, delete-orphan')
     statistics = db.relationship('GameStatistic', backref='game', lazy=True, cascade='all, delete-orphan')
     assignments = db.relationship('Assignment', backref='game', lazy=True, cascade='all, delete-orphan')
     

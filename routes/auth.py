@@ -74,9 +74,11 @@ def logout():
     return jsonify({'message': 'Logout successful'})
 
 @auth_bp.route('/me', methods=['GET'])
-@login_required
 def get_current_user():
     """Get current authenticated user information."""
+    if not current_user.is_authenticated:
+        return jsonify({'user': None, 'tenant': None}), 200
+    
     tenant = get_current_tenant()
     return jsonify({
         'user': current_user.to_dict(),
