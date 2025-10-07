@@ -60,6 +60,34 @@ const PlayerProfile: React.FC = () => {
     }
   };
 
+  const updateEmailPreference = async (field: string, value: boolean) => {
+    if (!player) return;
+
+    try {
+      const response = await fetch(`/api/players/${player.id}/email-preferences`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          [field]: value
+        })
+      });
+
+      if (response.ok) {
+        // Update local state
+        setPlayer({
+          ...player,
+          [field]: value
+        });
+      } else {
+        setError('Failed to update email preferences');
+      }
+    } catch (err) {
+      setError('Failed to update email preferences');
+    }
+  };
+
   if (loading) {
     return <div className="loading">Loading player profile...</div>;
   }
@@ -106,6 +134,46 @@ const PlayerProfile: React.FC = () => {
           )}
         </div>
 
+        {/* Email Preferences Section */}
+        <div className="email-preferences-section">
+          <h3>Email Preferences</h3>
+          <div className="preferences-grid">
+            <div className="preference-item">
+              <label className="preference-label">
+                <input
+                  type="checkbox"
+                  checked={player.email_invitations}
+                  onChange={(e) => updateEmailPreference('email_invitations', e.target.checked)}
+                />
+                <span>Game Invitations</span>
+              </label>
+              <p className="preference-description">Receive emails when invited to games</p>
+            </div>
+            <div className="preference-item">
+              <label className="preference-label">
+                <input
+                  type="checkbox"
+                  checked={player.email_reminders}
+                  onChange={(e) => updateEmailPreference('email_reminders', e.target.checked)}
+                />
+                <span>Game Reminders</span>
+              </label>
+              <p className="preference-description">Receive reminder emails before games</p>
+            </div>
+            <div className="preference-item">
+              <label className="preference-label">
+                <input
+                  type="checkbox"
+                  checked={player.email_notifications}
+                  onChange={(e) => updateEmailPreference('email_notifications', e.target.checked)}
+                />
+                <span>General Notifications</span>
+              </label>
+              <p className="preference-description">Receive emails about schedule changes and updates</p>
+            </div>
+          </div>
+        </div>
+
         <div className="profile-info">
           <h2>{player.name}</h2>
           <div className="profile-details">
@@ -122,8 +190,8 @@ const PlayerProfile: React.FC = () => {
             <div className="detail-item">
               <span className="detail-label">Type:</span>
               <span className="detail-value badge badge-type">
-                {player.player_type === 'spare' 
-                  ? `Spare (Priority ${player.spare_priority})` 
+                {player.player_type === 'spare'
+                  ? `Spare (Priority ${player.spare_priority})`
                   : 'Regular'}
               </span>
             </div>

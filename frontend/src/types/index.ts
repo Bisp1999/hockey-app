@@ -43,6 +43,9 @@ export interface Player {
   photo_filename?: string;
   photo_url?: string;
   language: 'en' | 'fr';
+  email_invitations: boolean;
+  email_reminders: boolean;
+  email_notifications: boolean;
   is_active: boolean;
   tenant_id: number;
   created_at: string;
