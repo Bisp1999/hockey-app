@@ -57,7 +57,10 @@ def create_app(config_name='development'):
             app.config[key] = value
 
     # Enable CORS for frontend - simple configuration
-    CORS(app, resources={r"/api/*": {"origins": "*", "supports_credentials": True}})
+    CORS(app, resources={r"/api/*": {
+        "origins": ["https://pickupteams.com", "https://*.pickupteams.com", "http://localhost:3000"],
+        "supports_credentials": True
+    }})
     
     # Initialize extensions with app
     db.init_app(app)
