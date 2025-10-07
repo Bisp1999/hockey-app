@@ -101,6 +101,7 @@ def create_app(config_name='development'):
     from routes.tenants import tenants_bp
     from routes.tenant_onboarding import onboarding_bp
     from routes.teams import teams_bp
+    from routes.admin import admin_bp
     
     # Register blueprints with /api prefix (for direct access)
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
@@ -112,6 +113,7 @@ def create_app(config_name='development'):
     app.register_blueprint(tenants_bp, url_prefix='/api/tenant')
     app.register_blueprint(onboarding_bp, url_prefix='/api/onboarding')
     app.register_blueprint(teams_bp, url_prefix='/api/teams')
+    app.register_blueprint(admin_bp, url_prefix='/api/admin')
     
     # CSRF error handler (JSON response for API)
     @app.errorhandler(CSRFError)
@@ -137,9 +139,6 @@ if __name__ == '__main__':
     config_name = os.environ.get('FLASK_ENV', 'development')
     app = create_app(config_name)
     app.run(debug=True)
-
-from routes.admin import admin_bp
-app.register_blueprint(admin_bp, url_prefix='/api/admin')
 
 # Create app instance for production servers (gunicorn, etc.)
 app = create_app()
