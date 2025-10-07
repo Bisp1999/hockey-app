@@ -24,7 +24,7 @@ def load_environment():
     env_file = env_files.get(flask_env, '.env.development')
     
     if os.path.exists(env_file):
-        load_dotenv(env_file, override=True)
+        load_dotenv(env_file, override=False)
         print(f"Loaded environment from {env_file}")
     else:
         print(f"Warning: {env_file} not found, using system environment variables")
