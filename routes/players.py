@@ -869,3 +869,58 @@ def get_player_recent_activity(player_id):
             'assignments': recent_assignments
         }
     })
+    
+# ============ Email Preference Management (Task 5.8) ============
+
+@players_bp.route('/<int:player_id>/email-preferences', methods=['GET'])
+@tenant_required
+@login_required
+def get_email_preferences(player_id):
+    """Get player's email preferences."""
+    tenant = get_current_tenant()
+    player = Player.query.filter_by(id=player_id, tenant_id=tenant.id).first_or_404()
+    
+    return jsonify({
+        'player_id': player.id,
+        'email_preferences': {
+            'email_invitations': player.email_invitations,
+            'email_reminders': player.email_reminders,
+            'email_notifications': player.email_notifications
+        }
+    })
+
+@players_bp.route('/<int:player_id>/email-preferences', methods=['PUT'])
+@tenant_required
+@login_required
+@limiter.limit("10 per minute")
+def update_email_preferences(player_id):
+    """Update player's email preferences."""
+    tenant = get_current_tenant()
+    player = Player.query.filter_by(id=player_id, tenant_id=tenant.id).first_or_404()
+    
+    data = request.get_json() or {}
+    
+    # Update preferences if provided
+    if 'email_invitations' in data:
+        player.email_invitations = bool(data['email_invitations'])
+    
+    if 'email_reminders' in data:
+        player.email_reminders = bool(data['email_reminders'])
+    
+    if 'email_notifications' in data:
+        player.email_notifications = bool(data['email_notifications'])
+    
+    try:
+        db.session.commit()
+        return jsonify({
+            'message': 'Email preferences updated successfully',
+            'email_preferences': {
+                'email_invitations': player.email_invitations,
+                'email_reminders': player.email_reminders,
+                'email_notifications': player.email_notifications
+            }
+        })
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Failed to update email preferences: {e}")
+        return jsonify({'error': 'Failed to update email preferences'}), 500

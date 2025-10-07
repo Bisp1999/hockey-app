@@ -34,6 +34,9 @@ class Player(TenantMixin, db.Model):
     spare_priority = db.Column(db.Integer, nullable=True)  # 1 or 2 for spare players, null for regulars
     photo_filename = db.Column(db.String(255), nullable=True)
     language = db.Column(db.String(5), default='en', nullable=False)
+    email_invitations = db.Column(db.Boolean, default=True, nullable=False)
+    email_reminders = db.Column(db.Boolean, default=True, nullable=False)
+    email_notifications = db.Column(db.Boolean, default=True, nullable=False)
     is_active = db.Column(db.Boolean, default=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
@@ -89,6 +92,9 @@ class Player(TenantMixin, db.Model):
             'spare_priority': self.spare_priority,
             'photo_filename': self.photo_filename,
             'language': self.language,
+            'email_invitations': self.email_invitations,
+            'email_reminders': self.email_reminders,
+            'email_notifications': self.email_notifications,
             'is_active': self.is_active,
             'tenant_id': self.tenant_id,
             'created_at': self.created_at.isoformat(),

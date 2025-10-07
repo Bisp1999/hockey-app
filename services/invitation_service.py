@@ -64,6 +64,11 @@ class InvitationService:
                         failed_count += 1
                         continue
                     
+                    # Check if player has email invitations enabled
+                    if not player.email_invitations:
+                        current_app.logger.info(f"Player {player.name} has email invitations disabled")
+                        continue
+                    
                     # Create invitation
                     invitation = Invitation(
                         game_id=game_id,
