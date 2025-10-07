@@ -10,6 +10,15 @@ import re
 
 admin_bp = Blueprint('admin', __name__)
 
+@admin_bp.route('/init-db', methods=['POST'])
+def init_database():
+    """Initialize database tables - REMOVE THIS IN PRODUCTION!"""
+    try:
+        db.create_all()
+        return jsonify({'message': 'Database tables created successfully!'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 ALLOWED_ROLES = {'user', 'admin', 'super_admin'}
 ASSIGNABLE_ROLES_BY_ROLE = {
     'admin': {'user', 'admin'},  # tenant admin cannot grant super_admin

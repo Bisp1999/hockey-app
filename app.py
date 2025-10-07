@@ -138,5 +138,8 @@ if __name__ == '__main__':
     app = create_app(config_name)
     app.run(debug=True)
 
+from routes.admin import admin_bp
+app.register_blueprint(admin_bp, url_prefix='/api/admin')
+
 # Create app instance for production servers (gunicorn, etc.)
 app = create_app()
