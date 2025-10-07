@@ -13,7 +13,7 @@
     "@types/react-dom": "^18.2.13",
     "axios": "^1.12.2",
     "date-fns": "^4.1.0",
-    "i18next": "^23.5.1",
+    "i18next": "^25.5.3",
     "i18next-browser-languagedetector": "^7.1.0",
     "i18next-http-backend": "^2.2.2",
     "react": "^18.2.0",
