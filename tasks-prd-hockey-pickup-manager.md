@@ -118,8 +118,8 @@ Based on the PRD analysis, this is a greenfield project requiring full-stack dev
   - [x] 5.4 Build automated invitation sending for regular players
   - [x] 5.5 Create availability response system (email reply + web link)
   - [x] 5.6 Build real-time availability dashboard for admins
-  - [ ] 5.7 Build a simple frontend registration page for tenants
-  - [ ] 5.8 Add email preference management for players
+  - [x] 5.7 Build a simple frontend registration page for tenants
+  - [x] 5.8 Add email preference management for players
   - [ ] 5.9 Implement player skill rating system for balanced team assignments
   - [ ] 5.10 Build automatic team assignment algorithm (balanced by skill/position)
   - [ ] 5.11 Build game details view with team assignments and manual override

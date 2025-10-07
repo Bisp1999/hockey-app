@@ -74,6 +74,41 @@ Built as a multi-tenant SaaS application, it allows multiple hockey teams/groups
 The second option just lumps Defence and Forwards together.
 5.5. The system must track spare player invitation history to ensure fair distribution
 
+## 5.9 Player Skill Rating System
+
+### Overview
+A skill rating system to enable balanced automatic team assignments by categorizing players into skill levels.
+
+### Rating Categories
+Players are rated on a 1-4 scale:
+1. **Developing** (1 point) - Below average/newer players
+2. **Average** (2 points) - Solid contributors (default for unrated players)
+3. **Strong** (3 points) - Above average players
+4. **Elite** (4 points) - Top-tier players
+
+### Key Features
+- **Optional Ratings**: Admins can choose to rate only certain players (e.g., only Elite and Developing). Unrated players default to "Average" (2 points) in team balance calculations.
+- **Position-Specific Ratings**: 
+  - Skaters (forwards and defense) share one rating system
+  - Goaltenders have a separate rating system
+- **Weighted Calculations**: 
+  - Skater rating weight: 1x
+  - Goaltender rating weight: 5x (to account for goalie impact on game balance)
+- **Admin-Only Visibility**: Only admins can view and edit skill ratings; players cannot see their own or others' ratings
+- **Team Balance Algorithm**: Ratings are used in automatic team assignment to ensure equal total skill points across both teams
+
+### Technical Implementation
+- Add `skill_rating` field to Player model (nullable integer 1-4)
+- Display rating selector in player creation/edit forms (admin only)
+- Show skill rating badges in player lists and profiles (admin only)
+- Use weighted ratings in automatic team assignment algorithm (Task 5.10)
+
+### Use Cases
+- Admin rates elite players as "Elite" (4) and developing players as "Developing" (1)
+- All other players remain unrated and default to "Average" (2) for calculations
+- Automatic team assignment balances teams by ensuring equal total weighted skill points
+- Example: Elite goalie (4 × 5 = 20 points) on Team A requires significant skater advantage on Team B to balance
+
 ### 6. Game Statistics Tracking
 6.1. The system must allow recording of goals with scorer and assist information
 6.2. The system must track goal timing including period and time within period

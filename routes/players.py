@@ -212,6 +212,16 @@ def create_player():
         else:
             is_active = bool(is_active_value)
 
+    # Handle skill_rating (optional, 1-4)
+    skill_rating = None
+    if 'skill_rating' in data and data['skill_rating']:
+        try:
+            skill_rating = int(data['skill_rating'])
+            if skill_rating not in [1, 2, 3, 4]:
+                return jsonify({'error': 'Skill rating must be between 1 and 4'}), 400
+        except (ValueError, TypeError):
+            return jsonify({'error': 'Invalid skill rating'}), 400
+
     # Create player
     player = Player(
         name=name,
@@ -221,6 +231,7 @@ def create_player():
         spare_priority=spare_priority,
         photo_filename=photo_filename,
         language=data.get('language', 'en'),
+        skill_rating=skill_rating,
         is_active=is_active,
         tenant_id=tenant.id
 )
@@ -321,6 +332,19 @@ def update_player(player_id):
             player.is_active = is_active_value.lower() in ['true', '1', 'yes']
         else:
             player.is_active = bool(is_active_value)
+    
+    # Handle skill_rating update
+    if 'skill_rating' in data:
+        if data['skill_rating'] is None or data['skill_rating'] == '':
+            player.skill_rating = None
+        else:
+            try:
+                skill_rating = int(data['skill_rating'])
+                if skill_rating not in [1, 2, 3, 4]:
+                    return jsonify({'error': 'Skill rating must be between 1 and 4'}), 400
+                player.skill_rating = skill_rating
+            except (ValueError, TypeError):
+                return jsonify({'error': 'Invalid skill rating'}), 400
     
     # Handle photo upload
     if photo_file and photo_file.filename:
