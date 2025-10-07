@@ -69,6 +69,11 @@ class TestingConfig(Config):
 class ProductionConfig(Config):
     """Production configuration."""
     DEBUG = False
+    TESTING = False
+    CORS_ORIGINS = [
+        'https://myhockeyapp.netlify.app',
+        'https://app-production-bdef.up.railway.app'
+    ]
     SQLALCHEMY_ECHO = False
     SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_HTTPONLY = True

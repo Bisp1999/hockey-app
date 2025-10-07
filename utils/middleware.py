@@ -85,6 +85,7 @@ class TenantMiddleware:
             '/api/auth/csrf-token',  # Add this too
             '/api/auth/login',  # Add this - allow login without tenant context first
             '/api/auth/logout',  # Add this too
+            '/api/onboarding/register',  # Add this line
         ]
         
         # Skip for static files and health checks
