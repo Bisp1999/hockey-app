@@ -20,6 +20,10 @@ class TenantMiddleware:
     
     def before_request(self):
                 
+        # Skip tenant check for certain admin endpoints
+        if request.path == '/api/admin/init-db':
+            return None
+        
         # Skip OPTIONS requests (CORS preflight)
         if request.method == 'OPTIONS':
             return
