@@ -56,18 +56,8 @@ def create_app(config_name='development'):
         if value is not None:
             app.config[key] = value
 
-    # Enable CORS for frontend
-    cors_origins = app.config.get('CORS_ORIGINS', [
-        "http://localhost:3000",
-        "https://myhockeyapp.netlify.app",
-        "https://app-production-bdef.up.railway.app"
-    ])
-    CORS(app, 
-        origins=cors_origins,
-        supports_credentials=True,
-        allow_headers=["Content-Type", "Authorization", "X-CSRFToken"],
-        expose_headers=["Content-Type", "X-CSRFToken"],
-        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"])
+    # Enable CORS for frontend - simple configuration
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
     
     # Initialize extensions with app
     db.init_app(app)
