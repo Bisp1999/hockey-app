@@ -46,6 +46,7 @@ export interface Player {
   email_invitations: boolean;
   email_reminders: boolean;
   email_notifications: boolean;
+  skill_rating?: number | null;  // 1-4 or null
   is_active: boolean;
   tenant_id: number;
   created_at: string;
@@ -204,6 +205,7 @@ export interface PlayerFormData {
   player_type: 'regular' | 'spare';
   spare_priority?: 1 | 2;
   language: 'en' | 'fr';
+  skill_rating?: number;
   photo?: File;
   is_active?: boolean; 
 }

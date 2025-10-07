@@ -205,6 +205,17 @@ const PlayerProfile: React.FC = () => {
               <span className="detail-label">Language:</span>
               <span className="detail-value">{player.language === 'en' ? 'English' : 'Français'}</span>
             </div>
+            {player.skill_rating && (
+              <div className="detail-item">
+                <span className="detail-label">Skill Rating:</span>
+                <span className="detail-value badge badge-skill">
+                  {player.skill_rating === 1 && 'Developing'}
+                  {player.skill_rating === 2 && 'Average'}
+                  {player.skill_rating === 3 && 'Strong'}
+                  {player.skill_rating === 4 && 'Elite'}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>

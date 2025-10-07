@@ -33,6 +33,7 @@ const PlayerForm: React.FC<PlayerFormProps> = ({ player, onClose }) => {
     player_type: player?.player_type || 'regular',
     spare_priority: player?.spare_priority || undefined,
     language: player?.language || 'en',
+    skill_rating: player?.skill_rating || undefined,
     photo: undefined,
     is_active: player?.is_active !== undefined ? player.is_active : true
   });
@@ -255,6 +256,25 @@ const PlayerForm: React.FC<PlayerFormProps> = ({ player, onClose }) => {
               <option value="en">English</option>
               <option value="fr">Français</option>
             </select>
+          </div>
+
+          {/* Skill Rating */}
+          <div className="form-group">
+            <label htmlFor="skill_rating">Skill Rating (Optional)</label>
+            <select
+              id="skill_rating"
+              name="skill_rating"
+              value={formData.skill_rating || ''}
+              onChange={handleChange}
+              className="form-control"
+            >
+              <option value="">Unrated (Average)</option>
+              <option value="1">Developing</option>
+              <option value="2">Average</option>
+              <option value="3">Strong</option>
+              <option value="4">Elite</option>
+            </select>
+            <small className="form-text">Admin only - used for team balancing</small>
           </div>
 
           {/* Active Status */}
