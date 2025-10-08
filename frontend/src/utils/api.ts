@@ -26,9 +26,17 @@ const fetchCsrfToken = async () => {
 // Initialize CSRF token
 fetchCsrfToken();
 
-// Request interceptor to add CSRF token
+// Request interceptor to add CSRF token and tenant header
 apiClient.interceptors.request.use(
   async (config) => {
+    // Extract tenant subdomain from current hostname
+    const hostname = window.location.hostname;
+    const parts = hostname.split('.');
+    if (parts.length > 2 && parts[0] !== 'www') {
+      // Send subdomain as header for cross-domain API calls
+      config.headers['X-Tenant-Subdomain'] = parts[0];
+    }
+    
     // Add CSRF token for unsafe methods
     if (config.method && ['post', 'put', 'delete', 'patch'].includes(config.method.toLowerCase())) {
       if (!csrfToken) {

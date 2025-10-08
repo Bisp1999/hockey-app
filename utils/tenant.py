@@ -16,6 +16,11 @@ def get_current_tenant():
     # Extract tenant from subdomain or path
     tenant_identifier = None
     
+    # Method 0: Header-based tenant identification (for cross-domain API calls)
+    tenant_header = request.headers.get('X-Tenant-Subdomain')
+    if tenant_header:
+        tenant_identifier = tenant_header
+    
     # Method 1: Subdomain-based tenant identification
     if current_app.config.get('TENANT_URL_SUBDOMAIN_ENABLED', True):
         host = request.host.lower()
