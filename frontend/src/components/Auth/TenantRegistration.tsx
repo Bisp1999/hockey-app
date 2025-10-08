@@ -131,7 +131,7 @@ const TenantRegistration: React.FC = () => {
       
       // Redirect to login after 2 seconds
       setTimeout(() => {
-        window.location.href = `http://${formData.subdomain}.localhost:3000/login`;
+        window.location.href = `https://${formData.subdomain}.pickupteams.com/login`;
       }, 2000);
       
     } catch (error: any) {
@@ -162,7 +162,7 @@ const TenantRegistration: React.FC = () => {
           <p>Your organization <strong>{formData.organization_name}</strong> has been created.</p>
           <p>Redirecting to login page...</p>
           <div className="subdomain-info">
-            Your URL: <strong>http://{formData.subdomain}.localhost:3000</strong>
+            Your URL: <strong>https://{formData.subdomain}.pickupteams.com</strong>
           </div>
         </div>
       </div>
@@ -211,7 +211,7 @@ const TenantRegistration: React.FC = () => {
                   placeholder="myteam"
                   className={errors.subdomain ? 'error' : ''}
                 />
-                <span className="subdomain-suffix">.localhost:3000</span>
+                <span className="subdomain-suffix">.pickupteams.com</span>
               </div>
               {errors.subdomain && (
                 <span className="error-message">{errors.subdomain}</span>
