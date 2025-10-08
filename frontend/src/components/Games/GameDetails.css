@@ -157,6 +157,98 @@
     border: 1px solid #f5c6cb;
   }
   
+  .balance-info {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .balance-score {
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .balance-score strong {
+    color: #1976d2;
+    font-size: 24px;
+  }
+  
+  .team-stats {
+    padding: 15px 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-around;
+    font-size: 14px;
+    color: #6c757d;
+  }
+  
+  .team-stats span {
+    font-weight: 500;
+  }
+  
+  .team-roster {
+    padding: 20px;
+    min-height: 300px;
+    background: #fafafa;
+  }
+  
+  .player-card {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+    transition: all 0.2s ease;
+  }
+  
+  .player-card:hover {
+    border-color: #1976d2;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.2);
+    transform: translateY(-2px);
+  }
+  
+  .player-card:active {
+    cursor: grabbing;
+    opacity: 0.7;
+  }
+  
+  .player-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .player-name {
+    font-weight: 600;
+    color: #333;
+    font-size: 15px;
+  }
+  
+  .player-position {
+    font-size: 12px;
+    color: #6c757d;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  
+  .player-rating {
+    font-size: 14px;
+    color: #f59e0b;
+    font-weight: 600;
+  }
+  
+  .team-card[data-drag-over="true"] {
+    background: #e3f2fd;
+  }
+  
   @media (max-width: 768px) {
     .teams-section {
       grid-template-columns: 1fr;

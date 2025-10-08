@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { gameService, Game } from '../../services/gameService';
+import { assignmentService, GameAssignments, PlayerAssignment } from '../../services/assignmentService';
 import { useTenant } from '../../contexts/TenantContext';
 import './GameDetails.css';
 
@@ -9,24 +10,50 @@ const GameDetails: React.FC = () => {
   const navigate = useNavigate();
   const { tenant } = useTenant();
   const [game, setGame] = useState<Game | null>(null);
+  const [assignments, setAssignments] = useState<GameAssignments | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [draggedPlayer, setDraggedPlayer] = useState<PlayerAssignment | null>(null);
 
   useEffect(() => {
-    loadGame();
+    loadGameData();
   }, [id]);
 
-  const loadGame = async () => {
+  const loadGameData = async () => {
     if (!id) return;
     
     try {
       setLoading(true);
-      const data = await gameService.getGame(parseInt(id));
-      setGame(data);
+      const [gameData, assignmentsData] = await Promise.all([
+        gameService.getGame(parseInt(id)),
+        assignmentService.getGameAssignments(parseInt(id))
+      ]);
+      setGame(gameData);
+      setAssignments(assignmentsData);
     } catch (err: any) {
       setError('Failed to load game details');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDragStart = (player: PlayerAssignment) => {
+    setDraggedPlayer(player);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = async (targetTeam: number) => {
+    if (!draggedPlayer || !id) return;
+
+    try {
+      await assignmentService.movePlayer(parseInt(id), draggedPlayer.id, targetTeam);
+      await loadGameData(); // Reload to show updated teams
+      setDraggedPlayer(null);
+    } catch (err) {
+      alert('Failed to move player');
     }
   };
 
@@ -49,6 +76,23 @@ const GameDetails: React.FC = () => {
     };
     return badges[status] || 'badge-scheduled';
   };
+
+  const renderPlayerCard = (player: PlayerAssignment) => (
+    <div
+      key={player.id}
+      className="player-card"
+      draggable
+      onDragStart={() => handleDragStart(player)}
+    >
+      <div className="player-info">
+        <span className="player-name">{player.first_name} {player.last_name}</span>
+        <span className="player-position">{player.position}</span>
+      </div>
+      {player.skill_rating && (
+        <span className="player-rating">⭐ {player.skill_rating}</span>
+      )}
+    </div>
+  );
 
   if (loading) {
     return <div className="loading">Loading game details...</div>;
@@ -115,29 +159,61 @@ const GameDetails: React.FC = () => {
         </div>
       </div>
 
-      <div className="teams-section">
-        <div className="team-card">
-          <div className="team-header" style={{ borderColor: game.team_1_color }}>
-            <h3>{game.team_1_name}</h3>
-            <span className="team-color-badge" style={{ backgroundColor: game.team_1_color }}></span>
+      {assignments && (
+        <>
+          <div className="balance-info">
+            <div className="balance-score">
+              Balance Difference: <strong>{assignments.balance_difference.toFixed(1)}</strong>
+            </div>
           </div>
-          <div className="team-roster">
-            <p className="empty-roster">No players assigned yet</p>
-            {/* Player assignments will be added in next step */}
-          </div>
-        </div>
 
-        <div className="team-card">
-          <div className="team-header" style={{ borderColor: game.team_2_color }}>
-            <h3>{game.team_2_name}</h3>
-            <span className="team-color-badge" style={{ backgroundColor: game.team_2_color }}></span>
+          <div className="teams-section">
+            <div 
+              className="team-card"
+              onDragOver={handleDragOver}
+              onDrop={() => handleDrop(1)}
+            >
+              <div className="team-header" style={{ borderColor: game.team_1_color }}>
+                <h3>{game.team_1_name}</h3>
+                <span className="team-color-badge" style={{ backgroundColor: game.team_1_color }}></span>
+              </div>
+              <div className="team-stats">
+                <span>Players: {assignments.team_1.count}</span>
+                <span>Score: {assignments.team_1.total_score.toFixed(1)}</span>
+              </div>
+              <div className="team-roster">
+                {assignments.team_1.players.length > 0 ? (
+                  assignments.team_1.players.map(renderPlayerCard)
+                ) : (
+                  <p className="empty-roster">No players assigned yet</p>
+                )}
+              </div>
+            </div>
+
+            <div 
+              className="team-card"
+              onDragOver={handleDragOver}
+              onDrop={() => handleDrop(2)}
+            >
+              <div className="team-header" style={{ borderColor: game.team_2_color }}>
+                <h3>{game.team_2_name}</h3>
+                <span className="team-color-badge" style={{ backgroundColor: game.team_2_color }}></span>
+              </div>
+              <div className="team-stats">
+                <span>Players: {assignments.team_2.count}</span>
+                <span>Score: {assignments.team_2.total_score.toFixed(1)}</span>
+              </div>
+              <div className="team-roster">
+                {assignments.team_2.players.length > 0 ? (
+                  assignments.team_2.players.map(renderPlayerCard)
+                ) : (
+                  <p className="empty-roster">No players assigned yet</p>
+                )}
+              </div>
+            </div>
           </div>
-          <div className="team-roster">
-            <p className="empty-roster">No players assigned yet</p>
-            {/* Player assignments will be added in next step */}
-          </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };
