@@ -1,7 +1,8 @@
 """
 Assignment management API endpoints.
 """
-from flask import Blueprint
+from flask import Blueprint, request, jsonify
+from utils.decorators import tenant_admin_required
 
 assignments_bp = Blueprint('assignments', __name__)
 
@@ -29,3 +30,22 @@ def delete_assignment(assignment_id):
 def get_game_assignments(game_id):
     """Get all assignments for a specific game."""
     return {'message': f'Get assignments for game {game_id} endpoint - to be implemented'}
+
+@assignments_bp.route('/game/<int:game_id>/auto-assign', methods=['POST'])
+@tenant_admin_required
+def auto_assign_teams(game_id):
+    """Automatically assign players to balanced teams."""
+    from services.team_assignment_service import TeamAssignmentService
+    
+    data = request.get_json() or {}
+    player_ids = data.get('player_ids', [])
+    
+    if not player_ids:
+        return jsonify({'error': 'No players provided'}), 400
+    
+    result = TeamAssignmentService.auto_assign_teams(game_id, player_ids)
+    
+    if 'error' in result:
+        return jsonify(result), 400
+    
+    return jsonify(result), 200
