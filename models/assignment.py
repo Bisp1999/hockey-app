@@ -13,7 +13,7 @@ class Assignment(TenantMixin, db.Model):
     __tablename__ = 'assignments'
     
     id = db.Column(db.Integer, primary_key=True)
-    task_description = db.Column(db.String(200), nullable=False)
+    task_description = db.Column(db.String(200), nullable=True)
     status = db.Column(db.String(20), default='assigned', nullable=False)  # 'assigned', 'completed', 'cancelled'
     assignment_type = db.Column(db.String(20), default='manual', nullable=False)  # 'manual', 'automatic'
     notes = db.Column(db.Text, nullable=True)
@@ -25,6 +25,7 @@ class Assignment(TenantMixin, db.Model):
     # tenant_id is inherited from TenantMixin
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False, index=True)
     player_id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False, index=True)
+    team_number = db.Column(db.Integer, nullable=True)  # 1 or 2 for team assignments
     
     def __repr__(self):
         return f'<Assignment {self.task_description} for Player {self.player_id}>'
@@ -43,5 +44,6 @@ class Assignment(TenantMixin, db.Model):
             'updated_at': self.updated_at.isoformat(),
             'tenant_id': self.tenant_id,
             'game_id': self.game_id,
-            'player_id': self.player_id
+            'player_id': self.player_id,
+            'team_number': self.team_number
         }

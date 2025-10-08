@@ -120,8 +120,8 @@ Based on the PRD analysis, this is a greenfield project requiring full-stack dev
   - [x] 5.6 Build real-time availability dashboard for admins
   - [x] 5.7 Build a simple frontend registration page for tenants
   - [x] 5.8 Add email preference management for players
-  - [ ] 5.9 Implement player skill rating system for balanced team assignments
-  - [ ] 5.10 Build automatic team assignment algorithm (balanced by skill/position)
+  - [x] 5.9 Implement player skill rating system for balanced team assignments
+  - [x] 5.10 Build automatic team assignment algorithm (balanced by skill/position)
   - [ ] 5.11 Build game details view with team assignments and manual override
 
 - [ ] 6.0 Intelligent Spare Player Management
