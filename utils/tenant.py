@@ -21,8 +21,8 @@ def get_current_tenant():
     if tenant_header:
         tenant_identifier = tenant_header
     
-    # Method 1: Subdomain-based tenant identification
-    if current_app.config.get('TENANT_URL_SUBDOMAIN_ENABLED', True):
+    # Method 1: Subdomain-based tenant identification (only if not found in header)
+    if not tenant_identifier and current_app.config.get('TENANT_URL_SUBDOMAIN_ENABLED', True):
         host = request.host.lower()
         if '.' in host:
             subdomain = host.split('.')[0]
