@@ -56,9 +56,14 @@ def create_app(config_name='development'):
         if value is not None:
             app.config[key] = value
 
-    # Enable CORS for frontend - simple configuration
+    # Enable CORS for frontend - support wildcard subdomains
     CORS(app, resources={r"/api/*": {
-        "origins": ["https://pickupteams.com", "https://*.pickupteams.com", "http://localhost:3000"],
+        "origins": [
+            r"https://.*\.pickupteams\.com",  # Wildcard subdomains
+            "https://pickupteams.com",
+            "http://localhost:3000",
+            "https://frontend-production-1f530.up.railway.app"
+        ],
         "supports_credentials": True
     }})
     
