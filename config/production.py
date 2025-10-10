@@ -4,7 +4,7 @@ import os
 from datetime import timedelta
 from .base import Config 
 
-class ProductionConfig:
+class ProductionConfig(Config):
     """Production configuration settings"""
     
     # Flask settings
