@@ -69,7 +69,7 @@ def create_app(config_name='development'):
         "https://frontend-production-1f530.up.railway.app"
     ],
     "supports_credentials": True,
-    "allow_headers": ["Content-Type", "X-Tenant-Subdomain", "X-CSRFToken"],
+    "allow_headers": "*",
     "expose_headers": ["Content-Type"]
 }})
     
