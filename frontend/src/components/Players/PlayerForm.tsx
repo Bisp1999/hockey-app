@@ -17,7 +17,8 @@ const PlayerForm: React.FC<PlayerFormProps> = ({ player, onClose }) => {
     if (!photoUrl) return null;
     if (photoUrl.startsWith('data:')) return photoUrl;
     // Use localhost for backend (Docker maps to localhost, not myteam.localhost)
-    return `http://localhost:5000${photoUrl}`;
+    const apiUrl = process.env.REACT_APP_API_URL?.replace('/api', '') || '';
+    return `${apiUrl}${photoUrl}`;
   };
 
   const [loading, setLoading] = useState(false);
