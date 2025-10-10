@@ -47,16 +47,21 @@ class TenantMiddleware:
             return jsonify({'error': 'Tenant context required'}), 400
         
         # Enforce tenant-aware sessions: if authenticated, session tenant must match request tenant
-        if request.path.startswith('/api/') and current_user.is_authenticated and tenant:
-            sess_tenant_id = session.get('tenant_id')
-            if sess_tenant_id is None:
-                # Backfill missing session binding to current tenant
-                session['tenant_id'] = tenant.id
-            elif sess_tenant_id != tenant.id:
-                # Mismatch: logout to prevent cross-tenant session leakage
-                logout_user()
-                session.pop('tenant_id', None)
-                return jsonify({'error': 'Tenant mismatch. Please sign in for this tenant.'}), 401
+        if request.path.startswith('/api/') and tenant:
+            try:
+                if current_user.is_authenticated:
+                    sess_tenant_id = session.get('tenant_id')
+                    if sess_tenant_id is None:
+                        # Backfill missing session binding to current tenant
+                        session['tenant_id'] = tenant.id
+                    elif sess_tenant_id != tenant.id:
+                        # Mismatch: logout to prevent cross-tenant session leakage
+                        logout_user()
+                        session.pop('tenant_id', None)
+                        return jsonify({'error': 'Tenant mismatch. Please sign in for this tenant.'}), 401
+            except Exception:
+                # Rollback failed transaction and continue
+                db.session.rollback()
     
     def after_request(self, response):
         """Clean up after request processing."""
