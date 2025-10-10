@@ -63,27 +63,17 @@ const PlayerProfile: React.FC = () => {
 
   const updateEmailPreference = async (field: string, value: boolean) => {
     if (!player) return;
-
+  
     try {
-      const response = await apiClient.put(`/players/${player.id}/email-preferences`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          [field]: value
-        })
+      await apiClient.put(`/players/${player.id}/email-preferences`, {
+        [field]: value
       });
-
-      if (response.ok) {
-        // Update local state
-        setPlayer({
-          ...player,
-          [field]: value
-        });
-      } else {
-        setError('Failed to update email preferences');
-      }
+  
+      // Update local state
+      setPlayer({
+        ...player,
+        [field]: value
+      });
     } catch (err) {
       setError('Failed to update email preferences');
     }
