@@ -4,6 +4,7 @@ Middleware for multi-tenant request processing.
 from flask import request, g, current_app, session, jsonify
 from flask_login import current_user, logout_user
 from utils.tenant import get_current_tenant, set_tenant_context
+from app import db
 
 class TenantMiddleware:
     """Middleware to handle tenant context for each request."""
