@@ -65,7 +65,7 @@ export const gameService = {
 
   // Create game
   async createGame(data: GameFormData): Promise<Game> {
-    const response = await apiClient.post('/games', data);
+    const response = await apiClient.post('/games/', data);
     return response.data.game;
   },
 
