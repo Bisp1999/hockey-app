@@ -6,6 +6,14 @@ import { Player } from '../../types';
 import './PlayerProfile.css';
 import { apiClient } from '../../utils/api';
 
+// Helper to get full photo URL
+const getPhotoUrl = (photoUrl: string | null | undefined) => {
+  if (!photoUrl) return null;
+  if (photoUrl.startsWith('http')) return photoUrl;
+  const apiUrl = process.env.REACT_APP_API_URL?.replace('/api', '') || '';
+  return `${apiUrl}${photoUrl}`;
+};
+
 interface PlayerProfile extends Player {
   statistics?: {
     games_played: number;
@@ -117,7 +125,7 @@ const PlayerProfile: React.FC = () => {
       <div className="profile-card">
         <div className="profile-photo-section">
           {player.photo_url ? (
-            <img src={player.photo_url} alt={player.name} className="profile-photo" />
+            <img src={getPhotoUrl(player.photo_url)} alt={player.name} className="profile-photo" />
           ) : (
             <div className="profile-photo-placeholder">
               {player.name.charAt(0)}
