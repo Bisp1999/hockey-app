@@ -19,7 +19,7 @@ const Header: React.FC = () => {
   return (
     <header className="header">
       <div className="header-left">
-        <h1 className="app-title">Hockey Pickup Manager</h1>
+        <h1 className="app-title">Pickup Teams - Hockey Management</h1>
         {tenant && <span className="tenant-name">{tenant.name}</span>}
       </div>
       <div className="header-right">
