@@ -163,7 +163,7 @@ const GameDetails: React.FC = () => {
         <>
           <div className="balance-info">
             <div className="balance-score">
-              Balance Difference: <strong>{assignments.balance_difference.toFixed(1)}</strong>
+              Balance Difference: <strong>{assignments.balance_difference?.toFixed(1) ?? 'N/A'}</strong>
             </div>
           </div>
 

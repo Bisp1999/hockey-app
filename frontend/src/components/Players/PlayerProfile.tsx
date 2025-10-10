@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { playerService } from '../../services/playerService';
 import { Player } from '../../types';
 import './PlayerProfile.css';
+import { apiClient } from '../../utils/api';
 
 interface PlayerProfile extends Player {
   statistics?: {
@@ -49,8 +50,8 @@ const PlayerProfile: React.FC = () => {
     try {
       setLoading(true);
       // This endpoint returns comprehensive profile with stats
-      const response = await fetch(`/api/players/${playerId}/profile`);
-      const data = await response.json();
+      const response = await apiClient.get(`/players/${playerId}/profile`);
+      const data = response.data;
       setPlayer(data.profile);
       setError(null);
     } catch (err: any) {
@@ -64,7 +65,7 @@ const PlayerProfile: React.FC = () => {
     if (!player) return;
 
     try {
-      const response = await fetch(`/api/players/${player.id}/email-preferences`, {
+      const response = await apiClient.put(`/players/${player.id}/email-preferences`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
