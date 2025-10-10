@@ -69,9 +69,12 @@ def create_app(config_name='development'):
         "https://frontend-production-1f530.up.railway.app"
     ],
     "supports_credentials": True,
-    "allow_headers": "*",
+    "allow_headers": ["Content-Type", "X-Tenant-Subdomain", "X-CSRFToken", "Authorization"],
     "expose_headers": ["Content-Type"]
 }})
+    
+     # Ensure upload directories exist
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     
     # Initialize extensions with app
     db.init_app(app)
