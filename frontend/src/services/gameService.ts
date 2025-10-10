@@ -52,7 +52,8 @@ export const gameService = {
     if (filters?.end_date) params.append('end_date', filters.end_date);
     if (filters?.status) params.append('status', filters.status);
     
-    const response = await apiClient.get(`/games?${params.toString()}`);
+    const paramsString = params.toString();
+    const response = await apiClient.get(`/games/${paramsString ? '?' + paramsString : ''}`);
     return response.data;
   },
 
