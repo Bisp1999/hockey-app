@@ -16,7 +16,8 @@ let csrfToken: string | null = null;
 
 const fetchCsrfToken = async () => {
   try {
-    const response = await axios.get('/api/auth/csrf-token', { withCredentials: true });
+    const apiUrl = process.env.REACT_APP_API_URL || '/api';
+    const response = await axios.get(`${apiUrl}/auth/csrf-token`, { withCredentials: true });
     csrfToken = response.data.csrfToken;
   } catch (error) {
     console.error('Failed to fetch CSRF token:', error);
