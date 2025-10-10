@@ -40,6 +40,10 @@ def create_app(config_name='development'):
     app = Flask(__name__)
     app.config.from_object(config[config_name]) 
     
+    # Debug: Log which config is being used and SameSite setting
+    print(f"=== USING CONFIG: {config_name} ===")
+    print(f"=== SESSION_COOKIE_SAMESITE: {app.config.get('SESSION_COOKIE_SAMESITE')} ===")
+    
     # Override config from environment variables (ensures env vars take precedence)
     env_overrides = {
         'MAIL_SERVER': os.getenv('MAIL_SERVER'),
