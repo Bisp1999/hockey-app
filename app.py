@@ -148,6 +148,3 @@ app = create_app(config_name)
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-# Create app instance for production servers (gunicorn, etc.)
-app = create_app()
