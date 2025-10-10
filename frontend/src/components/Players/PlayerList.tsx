@@ -7,8 +7,8 @@ import './PlayerList.css';
 import { useNavigate } from 'react-router-dom';
 
 // Helper to get full photo URL
-const getPhotoUrl = (photoUrl: string | null | undefined) => {
-  if (!photoUrl) return null;
+const getPhotoUrl = (photoUrl: string | null | undefined): string | undefined => {
+  if (!photoUrl) return undefined;
   if (photoUrl.startsWith('http')) return photoUrl;
   const apiUrl = process.env.REACT_APP_API_URL?.replace('/api', '') || '';
   return `${apiUrl}${photoUrl}`;
