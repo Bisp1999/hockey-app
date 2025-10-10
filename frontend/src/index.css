@@ -42,10 +42,10 @@ body {
   gap: 1rem;
 }
 
-.app-title {
+.header .app-title {
   font-size: 1.5rem;
   font-weight: bold;
-  color: white;
+  color: white !important;
 }
 
 .tenant-name {
