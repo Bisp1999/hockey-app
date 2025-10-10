@@ -6,7 +6,13 @@ import PlayerForm from './PlayerForm';
 import './PlayerList.css';
 import { useNavigate } from 'react-router-dom';
 
-
+// Helper to get full photo URL
+const getPhotoUrl = (photoUrl: string | null | undefined) => {
+  if (!photoUrl) return null;
+  if (photoUrl.startsWith('http')) return photoUrl;
+  const apiUrl = process.env.REACT_APP_API_URL?.replace('/api', '') || '';
+  return `${apiUrl}${photoUrl}`;
+};
 
 const PlayerList: React.FC = () => {
   const { t } = useTranslation();
@@ -234,7 +240,7 @@ const PlayerList: React.FC = () => {
                   <td>
                     {player.photo_url ? (
                       <img
-                        src={player.photo_url}
+                        src={getPhotoUrl(player.photo_url)}
                         alt={player.name}
                         className="player-photo-thumb"
                       />
