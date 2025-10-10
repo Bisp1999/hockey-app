@@ -62,14 +62,16 @@ def create_app(config_name='development'):
 
     # Enable CORS for frontend - support wildcard subdomains
     CORS(app, resources={r"/api/*": {
-        "origins": [
-            r"https://.*\.pickupteams\.com",  # Wildcard subdomains
-            "https://pickupteams.com",
-            "http://localhost:3000",
-            "https://frontend-production-1f530.up.railway.app"
-        ],
-        "supports_credentials": True
-    }})
+    "origins": [
+        r"https://.*\.pickupteams\.com",  # Wildcard subdomains
+        "https://pickupteams.com",
+        "http://localhost:3000",
+        "https://frontend-production-1f530.up.railway.app"
+    ],
+    "supports_credentials": True,
+    "allow_headers": ["Content-Type", "X-Tenant-Subdomain"],
+    "expose_headers": ["Content-Type"]
+}})
     
     # Initialize extensions with app
     db.init_app(app)
