@@ -37,7 +37,7 @@ const InvitationResponse: React.FC = () => {
   useEffect(() => {
     const fetchInvitation = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/invitations/respond/${token}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/invitations/respond/${token}`);
         setInvitation(response.data.invitation);
         setGame(response.data.game);
         
@@ -71,7 +71,7 @@ const InvitationResponse: React.FC = () => {
     setError(null);
 
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/invitations/respond/${token}`, {
+      await axios.post(`${process.env.REACT_APP_API_URL}/invitations/respond/${token}`, {
         response: selectedResponse,
         notes: notes.trim() || undefined
       });
