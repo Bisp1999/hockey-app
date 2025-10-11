@@ -248,6 +248,42 @@
   .team-card[data-drag-over="true"] {
     background: #e3f2fd;
   }
+
+  .game-actions {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .game-actions .btn {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  .invitation-message {
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .invitation-message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+  
+  .invitation-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
   
   @media (max-width: 768px) {
     .teams-section {

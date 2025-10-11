@@ -78,5 +78,11 @@ export const gameService = {
   // Delete game
   async deleteGame(id: number): Promise<void> {
     await apiClient.delete(`/games/${id}`);
+  },
+
+  // Send invitations for a game
+  async sendInvitations(id: number): Promise<{ message: string; invitations: { sent: number; failed: number } }> {
+    const response = await apiClient.post(`/games/${id}/send-invitations`);
+    return response.data;
   }
 };

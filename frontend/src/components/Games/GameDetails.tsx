@@ -14,6 +14,8 @@ const GameDetails: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [draggedPlayer, setDraggedPlayer] = useState<PlayerAssignment | null>(null);
+  const [sendingInvitations, setSendingInvitations] = useState(false);
+const [invitationMessage, setInvitationMessage] = useState<string | null>(null);
 
   useEffect(() => {
     loadGameData();
@@ -34,6 +36,21 @@ const GameDetails: React.FC = () => {
       setError('Failed to load game details');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSendInvitations = async () => {
+    if (!id) return;
+    
+    try {
+      setSendingInvitations(true);
+      setInvitationMessage(null);
+      const result = await gameService.sendInvitations(parseInt(id));
+      setInvitationMessage(`✅ ${result.invitations.sent} invitations sent successfully!`);
+    } catch (err: any) {
+      setInvitationMessage(`❌ Failed to send invitations: ${err.response?.data?.error || 'Unknown error'}`);
+    } finally {
+      setSendingInvitations(false);
     }
   };
 
@@ -157,6 +174,21 @@ const GameDetails: React.FC = () => {
             </div>
           )}
         </div>
+      </div>
+
+      <div className="game-actions">
+          <button 
+            className="btn btn-primary"
+            onClick={handleSendInvitations}
+            disabled={sendingInvitations}
+          >
+            {sendingInvitations ? 'Sending...' : '📧 Send Invitations'}
+          </button>
+          {invitationMessage && (
+            <div className={`invitation-message ${invitationMessage.includes('✅') ? 'success' : 'error'}`}>
+              {invitationMessage}
+            </div>
+          )}
       </div>
 
       {assignments && (
