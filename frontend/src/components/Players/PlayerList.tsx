@@ -10,8 +10,20 @@ import { useNavigate } from 'react-router-dom';
 const getPhotoUrl = (photoUrl: string | null | undefined): string | undefined => {
   if (!photoUrl) return undefined;
   if (photoUrl.startsWith('http')) return photoUrl;
-  const apiUrl = process.env.REACT_APP_API_URL?.replace('/api', '') || '';
-  return `${apiUrl}${photoUrl}`;
+  
+  // Get the API URL
+  const apiUrl = process.env.REACT_APP_API_URL || 'https://api.pickupteams.com/api';
+  
+  // Extract base URL (remove /api if it exists at the end)
+  let baseUrl = apiUrl;
+  if (baseUrl.endsWith('/api')) {
+    baseUrl = baseUrl.substring(0, baseUrl.length - 4);
+  }
+  
+  // Ensure photoUrl starts with /
+  const path = photoUrl.startsWith('/') ? photoUrl : `/${photoUrl}`;
+  
+  return `${baseUrl}${path}`;
 };
 
 const PlayerList: React.FC = () => {
