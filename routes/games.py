@@ -241,7 +241,7 @@ def create_game():
             db.session.commit()
             
             # Auto-send invitations to regular players if enabled
-            auto_invite = data.get('auto_invite_regular_players', True)
+            auto_invite = data.get('auto_invite_regular_players', False)
             invitation_summary = None
             
             if auto_invite:
@@ -367,3 +367,24 @@ def delete_game(game_id):
         db.session.rollback()
         current_app.logger.error(f"Failed to delete game: {e}")
         return jsonify({'error': 'Failed to delete game'}), 500
+    
+@games_bp.route('/<int:game_id>/send-invitations', methods=['POST'])
+@tenant_admin_required
+@limiter.limit("10 per minute")
+def send_game_invitations(game_id):
+    """Manually send invitations for a game."""
+    tenant = get_current_tenant()
+    game = Game.query.filter_by(id=game_id, tenant_id=tenant.id).first_or_404()
+    
+    try:
+        # Send invitations to regular players
+        invitation_summary = InvitationService.auto_invite_regular_players(game.id)
+        current_app.logger.info(f"Manually sent invitations for game {game_id}: {invitation_summary}")
+        
+        return jsonify({
+            'message': 'Invitations sent successfully',
+            'invitations': invitation_summary
+        }), 200
+    except Exception as e:
+        current_app.logger.error(f"Failed to send invitations: {e}")
+        return jsonify({'error': 'Failed to send invitations'}), 500    
