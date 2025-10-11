@@ -210,12 +210,12 @@ const [invitationMessage, setInvitationMessage] = useState<string | null>(null);
                 <span className="team-color-badge" style={{ backgroundColor: game.team_1_color }}></span>
               </div>
               <div className="team-stats">
-                <span>Players: {assignments.team_1.count}</span>
-                <span>Score: {assignments.team_1.total_score.toFixed(1)}</span>
+                <span>Players: {assignments.team_1?.count ?? assignments.team_1?.players.length ?? 0}</span>
+                <span>Score: {assignments.team_1?.total_score.toFixed(1) ?? 'N/A'}</span>
               </div>
               <div className="team-roster">
-                {assignments.team_1.players.length > 0 ? (
-                  assignments.team_1.players.map(renderPlayerCard)
+                {assignments.team_1?.players.length > 0 ? (
+                  assignments.team_1?.players.map(renderPlayerCard)
                 ) : (
                   <p className="empty-roster">No players assigned yet</p>
                 )}
@@ -232,12 +232,12 @@ const [invitationMessage, setInvitationMessage] = useState<string | null>(null);
                 <span className="team-color-badge" style={{ backgroundColor: game.team_2_color }}></span>
               </div>
               <div className="team-stats">
-                <span>Players: {assignments.team_2.count}</span>
-                <span>Score: {assignments.team_2.total_score.toFixed(1)}</span>
+                <span>Players: {assignments.team_2?.count ?? assignments.team_2?.players.length ?? 0}</span>                
+                <span>Score: {assignments.team_2?.total_score?.toFixed(1) ?? 'N/A'}</span>
               </div>
               <div className="team-roster">
-                {assignments.team_2.players.length > 0 ? (
-                  assignments.team_2.players.map(renderPlayerCard)
+                {assignments.team_2?.players.length > 0 ? (
+                  assignments.team_2?.players.map(renderPlayerCard)
                 ) : (
                   <p className="empty-roster">No players assigned yet</p>
                 )}
