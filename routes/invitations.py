@@ -225,7 +225,7 @@ def send_reminder(invitation_id):
             game_date=game_date,
             game_time=game_time,
             venue=game.venue,
-            game_id=game_id,
+            game_id=game.id,
             language=player.preferred_language or 'en',
             tenant_subdomain=None,
             invitation_token=invitation.token  # Add this line
