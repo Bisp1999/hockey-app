@@ -39,7 +39,8 @@ class EmailService:
     @staticmethod
     def send_game_invitation(player_email: str, player_name: str, game_date: str, 
                         game_time: str, venue: str, game_id: int, language: str = 'en',
-                        tenant_subdomain: str = None, invitation_token: str = None):
+                        tenant_subdomain: str = None, invitation_token: str = None,
+                        is_reminder: bool = False, has_responded: bool = False):
         """
         Send a game invitation email to a player using templates.
     
@@ -53,6 +54,8 @@ class EmailService:
             language: Email language ('en' or 'fr')
             tenant_subdomain: Tenant subdomain for URL generation
             invitation_token: Secure token for email responses
+            is_reminder: Whether this is a reminder email
+            has_responded: Whether the player has already responded
         """
         # Generate URLs for confirmation/decline
         base_url = current_app.config.get('FRONTEND_URL', 'http://localhost:3000')
@@ -82,6 +85,8 @@ class EmailService:
             game_date=game_date,
             game_time=game_time,
             venue=venue,
+            is_reminder=is_reminder,
+            has_responded=has_responded,
             confirm_url=confirm_url,
             decline_url=decline_url,
             tenant_url=tenant_url

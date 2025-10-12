@@ -122,7 +122,7 @@ Based on the PRD analysis, this is a greenfield project requiring full-stack dev
   - [x] 5.8 Add email preference management for players
   - [x] 5.9 Implement player skill rating system for balanced team assignments
   - [x] 5.10 Build automatic team assignment algorithm (balanced by skill/position)
-  - [ ] 5.11 Build game details view with team assignments and manual override
+  - [x] 5.11 Build game details view with team assignments and manual override
 
 - [ ] 6.0 Intelligent Spare Player Management
   - [ ] 6.1 Implement spare player priority system (Priority 1 and 2)
@@ -132,6 +132,9 @@ Based on the PRD analysis, this is a greenfield project requiring full-stack dev
   - [ ] 6.5 Add spare invitation history tracking
   - [ ] 6.6 Create spare player management interface for admins
   - [ ] 6.7 Build notification system for spare opportunities
+  - [ ] 6.8 Add "Auto-Assign" button to trigger the team assignment algorithm from UI
+  - [ ] 6.9 Add player availability filtering before assignment
+  - [ ] 6.10 Add undo/redo for team changes
 
 - [ ] 7.0 Game Statistics and Attendance Tracking
   - [ ] 7.1 Create statistics models for goals, assists, penalties, and attendance

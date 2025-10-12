@@ -22,7 +22,15 @@
                         <td style="padding: 40px 30px;">
                             <p style="margin: 0 0 20px; font-size: 16px; color: #333;">Hello <strong>{{ player_name }}</strong>,</p>
                             
+                            {% if is_reminder and not has_responded %}
+                            <p style="margin: 0 0 20px; font-size: 16px; color: #d9534f; font-weight: 600;">⚠️ Reminder: We haven't received your response yet!</p>
+                            <p style="margin: 0 0 30px; font-size: 16px; color: #333;">Please confirm your availability for the following game:</p>
+                            {% elif is_reminder and has_responded %}
+                            <p style="margin: 0 0 20px; font-size: 16px; color: #5cb85c; font-weight: 600;">✓ Friendly Reminder</p>
+                            <p style="margin: 0 0 30px; font-size: 16px; color: #333;">This is a friendly reminder about the upcoming game. If your availability has changed, please update your response:</p>
+                            {% else %}
                             <p style="margin: 0 0 30px; font-size: 16px; color: #333;">You are invited to the following game:</p>
+                            {% endif %}
                             
                             <!-- Game Details Box -->
                             <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8f9fa; border-radius: 6px; margin-bottom: 30px;">

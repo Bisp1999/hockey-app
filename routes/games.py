@@ -381,10 +381,84 @@ def send_game_invitations(game_id):
         invitation_summary = InvitationService.auto_invite_regular_players(game.id)
         current_app.logger.info(f"Manually sent invitations for game {game_id}: {invitation_summary}")
         
+        # Record when invitations were sent
+        game.invitations_sent_at = datetime.utcnow()
+        db.session.commit()
+        
         return jsonify({
             'message': 'Invitations sent successfully',
             'invitations': invitation_summary
         }), 200
     except Exception as e:
+        db.session.rollback()
         current_app.logger.error(f"Failed to send invitations: {e}")
-        return jsonify({'error': 'Failed to send invitations'}), 500    
+        return jsonify({'error': 'Failed to send invitations'}), 500
+
+@games_bp.route('/<int:game_id>/send-reminders', methods=['POST'])
+@tenant_admin_required
+@limiter.limit("10 per minute")
+def send_game_reminders(game_id):
+    """Send reminder emails for a game with different messages based on response status."""
+    from models.invitation import Invitation
+    from models.player import Player
+    from utils.email_service import EmailService
+    
+    tenant = get_current_tenant()
+    game = Game.query.filter_by(id=game_id, tenant_id=tenant.id).first_or_404()
+    
+    try:
+        # Get all invitations for this game
+        invitations = Invitation.query.filter_by(game_id=game.id, tenant_id=tenant.id).all()
+        
+        if not invitations:
+            return jsonify({'error': 'No invitations found for this game'}), 400
+        
+        sent_count = 0
+        failed_count = 0
+        
+        game_date = game.date.strftime('%A, %B %d, %Y')
+        game_time = game.time.strftime('%I:%M %p')
+        
+        for invitation in invitations:
+            player = invitation.player
+            
+            if not player.email:
+                failed_count += 1
+                continue
+            
+            # Determine message type based on response status
+            is_reminder = invitation.response is not None
+            
+            success = EmailService.send_game_invitation(
+                player_email=player.email,
+                player_name=player.name,
+                game_date=game_date,
+                game_time=game_time,
+                venue=game.venue,
+                game_id=game.id,
+                language=player.preferred_language or 'en',
+                tenant_subdomain=game.tenant.subdomain,
+                invitation_token=invitation.token,
+                is_reminder=is_reminder,
+                has_responded=invitation.response is not None
+            )
+            
+            if success:
+                sent_count += 1
+                invitation.send_reminder()  # Track reminder sent
+            else:
+                failed_count += 1
+        
+        db.session.commit()
+        
+        return jsonify({
+            'message': f'Reminders sent to {sent_count} players',
+            'reminders': {
+                'sent': sent_count,
+                'failed': failed_count
+            }
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Failed to send reminders: {e}")
+        return jsonify({'error': 'Failed to send reminders'}), 500    

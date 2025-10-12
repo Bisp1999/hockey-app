@@ -18,6 +18,7 @@ export interface Game {
   recurrence_pattern?: string;
   recurrence_end_date?: string;
   tenant_id: number;
+  invitations_sent_at?: string;
   created_at: string;
   updated_at: string;
 }
@@ -83,6 +84,12 @@ export const gameService = {
   // Send invitations for a game
   async sendInvitations(id: number): Promise<{ message: string; invitations: { sent: number; failed: number } }> {
     const response = await apiClient.post(`/games/${id}/send-invitations`);
+    return response.data;
+  },
+
+  // Send reminders for a game
+  async sendReminders(id: number): Promise<{ message: string; reminders: { sent: number; failed: number } }> {
+    const response = await apiClient.post(`/games/${id}/send-reminders`);
     return response.data;
   }
 };

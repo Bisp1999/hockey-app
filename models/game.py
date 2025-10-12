@@ -35,6 +35,8 @@ class Game(TenantMixin, db.Model):
     recurrence_pattern = db.Column(db.String(50), nullable=True)  # 'weekly', 'biweekly', 'monthly'
     recurrence_end_date = db.Column(db.Date, nullable=True)
     
+    invitations_sent_at = db.Column(db.DateTime, nullable=True)  # Track when invitations were sent
+    
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     
@@ -68,6 +70,7 @@ class Game(TenantMixin, db.Model):
             'recurrence_pattern': self.recurrence_pattern,
             'recurrence_end_date': self.recurrence_end_date.isoformat() if self.recurrence_end_date else None,
             'tenant_id': self.tenant_id,
+            'invitations_sent_at': self.invitations_sent_at.isoformat() if self.invitations_sent_at else None,
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
         }

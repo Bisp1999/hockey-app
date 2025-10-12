@@ -15,7 +15,9 @@ const GameDetails: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [draggedPlayer, setDraggedPlayer] = useState<PlayerAssignment | null>(null);
   const [sendingInvitations, setSendingInvitations] = useState(false);
-const [invitationMessage, setInvitationMessage] = useState<string | null>(null);
+  const [invitationMessage, setInvitationMessage] = useState<string | null>(null);
+  const [sendingReminders, setSendingReminders] = useState(false);
+  const [reminderMessage, setReminderMessage] = useState<string | null>(null);
 
   useEffect(() => {
     loadGameData();
@@ -47,10 +49,27 @@ const [invitationMessage, setInvitationMessage] = useState<string | null>(null);
       setInvitationMessage(null);
       const result = await gameService.sendInvitations(parseInt(id));
       setInvitationMessage(`✅ ${result.invitations.sent} invitations sent successfully!`);
+      // Reload game data to get updated invitations_sent_at
+      await loadGameData();
     } catch (err: any) {
       setInvitationMessage(`❌ Failed to send invitations: ${err.response?.data?.error || 'Unknown error'}`);
     } finally {
       setSendingInvitations(false);
+    }
+  };
+
+  const handleSendReminders = async () => {
+    if (!id) return;
+    
+    try {
+      setSendingReminders(true);
+      setReminderMessage(null);
+      const result = await gameService.sendReminders(parseInt(id));
+      setReminderMessage(`✅ ${result.reminders.sent} reminders sent successfully!`);
+    } catch (err: any) {
+      setReminderMessage(`❌ Failed to send reminders: ${err.response?.data?.error || 'Unknown error'}`);
+    } finally {
+      setSendingReminders(false);
     }
   };
 
@@ -179,17 +198,47 @@ const [invitationMessage, setInvitationMessage] = useState<string | null>(null);
       </div>
 
       <div className="game-actions">
-          <button 
-            className="btn btn-primary"
-            onClick={handleSendInvitations}
-            disabled={sendingInvitations}
-          >
-            {sendingInvitations ? 'Sending...' : '📧 Send Invitations'}
-          </button>
-          {invitationMessage && (
-            <div className={`invitation-message ${invitationMessage.includes('✅') ? 'success' : 'error'}`}>
-              {invitationMessage}
-            </div>
+          {game.invitations_sent_at ? (
+            <>
+              <div className="invitation-status">
+                <span className="status-text">
+                  ✅ Invitations sent on {new Date(game.invitations_sent_at).toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </span>
+              </div>
+              <button 
+                className="btn btn-secondary"
+                onClick={handleSendReminders}
+                disabled={sendingReminders}
+              >
+                {sendingReminders ? 'Sending...' : '🔔 Send Reminders'}
+              </button>
+              {reminderMessage && (
+                <div className={`invitation-message ${reminderMessage.includes('✅') ? 'success' : 'error'}`}>
+                  {reminderMessage}
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <button 
+                className="btn btn-primary"
+                onClick={handleSendInvitations}
+                disabled={sendingInvitations}
+              >
+                {sendingInvitations ? 'Sending...' : '📧 Send Invitations'}
+              </button>
+              {invitationMessage && (
+                <div className={`invitation-message ${invitationMessage.includes('✅') ? 'success' : 'error'}`}>
+                  {invitationMessage}
+                </div>
+              )}
+            </>
           )}
       </div>
 
