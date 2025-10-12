@@ -57,7 +57,9 @@ class EmailService:
         # Generate URLs for confirmation/decline
         base_url = current_app.config.get('FRONTEND_URL', 'http://localhost:3000')
         if tenant_subdomain:
-            base_url = f"http://{tenant_subdomain}.localhost:3000"
+            # Extract domain from FRONTEND_URL or use default
+            frontend_domain = current_app.config.get('FRONTEND_DOMAIN', 'pickupteams.com')
+            base_url = f"https://{tenant_subdomain}.{frontend_domain}"
     
         # Use token-based URLs if token is provided
         if invitation_token:
