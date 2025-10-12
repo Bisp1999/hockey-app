@@ -227,7 +227,7 @@ def send_reminder(invitation_id):
             venue=game.venue,
             game_id=game.id,
             language=player.preferred_language or 'en',
-            tenant_subdomain=None,
+            tenant_subdomain=game.tenant.subdomain,
             invitation_token=invitation.token  # Add this line
         )
         

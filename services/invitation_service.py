@@ -93,7 +93,7 @@ class InvitationService:
                         venue=game.venue,
                         game_id=game_id,
                         language=player.preferred_language,
-                        tenant_subdomain=None,
+                        tenant_subdomain=game.tenant.subdomain,
                         invitation_token=invitation.token
                     )
                     
