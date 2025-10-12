@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import axios from 'axios';
+import { apiClient } from '../../utils/api';
 import './InvitationResponse.css';
 
 interface Invitation {
@@ -37,7 +37,7 @@ const InvitationResponse: React.FC = () => {
   useEffect(() => {
     const fetchInvitation = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/invitations/respond/${token}`);
+        const response = await apiClient.get(`/invitations/respond/${token}`);
         setInvitation(response.data.invitation);
         setGame(response.data.game);
         
@@ -71,7 +71,7 @@ const InvitationResponse: React.FC = () => {
     setError(null);
 
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/invitations/respond/${token}`, {
+      await apiClient.post(`/invitations/respond/${token}`, {
         response: selectedResponse,
         notes: notes.trim() || undefined
       });
@@ -113,7 +113,11 @@ const InvitationResponse: React.FC = () => {
           {game && (
             <div className="game-summary">
               <h3>Game Details</h3>
-              <p><strong>Date:</strong> {new Date(game.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+              <p><strong>Date:</strong> {(() => {
+                const [year, month, day] = game.date.split('-').map(Number);
+                const date = new Date(year, month - 1, day);
+                return date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+              })()}</p>
               <p><strong>Time:</strong> {game.time}</p>
               <p><strong>Venue:</strong> {game.venue}</p>
             </div>
@@ -140,7 +144,11 @@ const InvitationResponse: React.FC = () => {
             <h2>Game Details</h2>
             <div className="detail-row">
               <span className="label">Date:</span>
-              <span className="value">{new Date(game.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+              <span className="value">{(() => {
+                const [year, month, day] = game.date.split('-').map(Number);
+                const date = new Date(year, month - 1, day);
+                return date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+              })()}</span>
             </div>
             <div className="detail-row">
               <span className="label">Time:</span>
