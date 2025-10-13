@@ -195,7 +195,7 @@ def register_tenant():
             email=admin_email,
             first_name=admin_first_name,
             last_name=admin_last_name,
-            role='admin',
+            role='super_admin',
             is_verified=True,  # Admin is auto-verified
             is_active=True,
             tenant_id=tenant.id
