@@ -20,11 +20,11 @@
 .invite-form .form-row {
     display: flex;
     gap: 1rem;
-    align-items: flex-end; /* Aligns form fields and button to the bottom */
+    align-items: flex-end; /* Aligns form fields and button to the same bottom baseline */
 }
 
 .invite-form .form-group {
-    flex-grow: 1; /* Allows email and role fields to take up available space */
+    flex-grow: 1;
 }
 
 .invite-form .form-group label {
@@ -33,24 +33,7 @@
     font-weight: 500;
 }
 
-.invite-form .form-group input,
-.invite-form .form-group select {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    height: 48px; /* Explicit height for alignment */
-    background-color: white;
-}
-
-.invite-form button {
-    flex-shrink: 0; /* Prevents the button from shrinking */
-    height: 48px;
-    width: 180px; /* Wider button */
-    margin-bottom: 0;
-    font-weight: 500;
-}
+/* We can remove the custom .invite-form button styles entirely now */
 
 .success-message {
     color: #28a745;

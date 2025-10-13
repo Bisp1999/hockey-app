@@ -47,7 +47,7 @@ const InviteManagerForm: React.FC = () => {
                 {/* Add other roles as needed */}
             </select>
         </div>
-        <button type="submit" disabled={submitting}>
+        <button type="submit" className="btn btn-primary" disabled={submitting}>
           {submitting ? 'Sending...' : 'Send Invitation'}
         </button>
       </div>
