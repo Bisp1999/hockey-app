@@ -77,7 +77,8 @@ class ProductionConfig(Config):
     SQLALCHEMY_ECHO = False
     SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = 'Strict'
+    SESSION_COOKIE_SAMESITE = 'None'
+    SESSION_COOKIE_DOMAIN = '.pickupteams.com'
     PREFERRED_URL_SCHEME = 'https'
     SSL_REDIRECT = True
 
