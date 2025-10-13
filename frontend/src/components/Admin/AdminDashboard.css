@@ -8,20 +8,40 @@
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   margin-top: 2rem;
+  max-width: 800px;
 }
 
 .invite-form .form-row {
     display: flex;
     gap: 1rem;
-    align-items: flex-end;
+    align-items: flex-end; /* Aligns items to the bottom */
 }
 
 .invite-form .form-group {
-    flex-grow: 1;
+    flex-grow: 1; /* Allows email and role fields to take up space */
+}
+
+/* Ensure labels are displayed correctly */
+.invite-form .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* Style for the select dropdown to match the input */
+.invite-form .form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    height: 48px; /* Explicit height to match typical input */
+    background-color: white;
 }
 
 .invite-form button {
-    max-width: 150px;
+    flex-shrink: 0; /* Prevents the button from shrinking */
+    height: 48px; /* Match height of form fields */
+    margin-bottom: 0; /* Align with inputs that have no bottom margin */
 }
 
 .success-message {
