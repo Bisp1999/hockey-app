@@ -16,6 +16,7 @@ import PlayerProfile from './components/Players/PlayerProfile';
 import GamesContainer from './components/Games/GamesContainer';
 import GameDetails from './components/Games/GameDetails';
 import InvitationResponse from './components/Invitations/InvitationResponse';
+import AcceptInvitation from './components/Auth/AcceptInvitation';
 import TenantRegistration from './components/Auth/TenantRegistration';
 import './App.css';
 
@@ -28,6 +29,7 @@ function App() {
             <Routes>
               {/* Public route for invitation responses - no auth required */}
               <Route path="/invitations/respond/:token" element={<InvitationResponse />} />
+              <Route path="/accept-invitation/:token" element={<AcceptInvitation />} />
 
               {/* Public route for tenant registration - no auth required */}
               <Route path="/register" element={<TenantRegistration />} />
