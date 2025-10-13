@@ -182,5 +182,5 @@ coverage.xml
 .pytest_cache/
 
 # Migrations (keep structure, ignore auto-generated)
-migrations/versions/*.py
+# migrations/versions/*.py
 !migrations/versions/.gitkeep
