@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "flask db stamp c6ab400c729c && flask db upgrade && gunicorn app:app --bind 0.0.0.0:$PORT",
+    "startCommand": "flask db upgrade && gunicorn app:app --bind 0.0.0.0:$PORT",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }
