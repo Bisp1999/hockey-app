@@ -8,6 +8,9 @@ from app import db
 from models.invitation import Invitation
 from models.game import Game
 from models.player import Player
+from models.admin_invitation import AdminInvitation
+from models.user import User
+from flask_login import login_user
 from utils.decorators import tenant_required, tenant_admin_required
 from utils.email_service import EmailService
 
@@ -198,6 +201,73 @@ def respond_by_token(token):
         db.session.rollback()
         current_app.logger.error(f"Error responding by token: {e}")
         return jsonify({'error': 'Failed to process response'}), 500
+
+@invitations_bp.route('/admin/verify/<token>', methods=['GET'])
+def verify_admin_invitation(token):
+    """Verify an admin invitation token."""
+    invitation = AdminInvitation.query.filter_by(token=token).first()
+
+    if not invitation or not invitation.is_valid():
+        return jsonify({'error': 'This invitation is invalid or has expired.'}), 404
+
+    return jsonify({
+        'message': 'Invitation is valid.',
+        'invitation': {
+            'email': invitation.email,
+            'tenant_name': invitation.tenant.name,
+            'role': invitation.role
+        }
+    }), 200
+
+@invitations_bp.route('/admin/accept', methods=['POST'])
+def accept_admin_invitation():
+    """Accept an admin invitation and create the new user account."""
+    data = request.get_json()
+    token = data.get('token')
+    password = data.get('password')
+    first_name = data.get('first_name')
+    last_name = data.get('last_name')
+
+    if not all([token, password, first_name, last_name]):
+        return jsonify({'error': 'Missing required fields.'}), 400
+
+    invitation = AdminInvitation.query.filter_by(token=token).first()
+
+    if not invitation or not invitation.is_valid():
+        return jsonify({'error': 'This invitation is invalid or has expired.'}), 404
+
+    # Check if a user with this email already exists in the tenant
+    if User.query.filter_by(email=invitation.email, tenant_id=invitation.tenant_id).first():
+        invitation.status = 'expired'
+        db.session.commit()
+        return jsonify({'error': 'A user with this email already exists in the organization.'}), 409
+
+    # Create the new user
+    new_user = User(
+        email=invitation.email,
+        first_name=first_name,
+        last_name=last_name,
+        role=invitation.role,
+        tenant_id=invitation.tenant_id,
+        is_active=True,
+        is_verified=True # Email is verified by accepting the invitation
+    )
+    new_user.set_password(password)
+
+    # Update the invitation status
+    invitation.status = 'accepted'
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    # Log the new user in
+    login_user(new_user)
+
+    return jsonify({
+        'message': 'Account created successfully! You are now logged in.',
+        'user': new_user.to_dict(),
+        'tenant': new_user.tenant.to_dict()
+    }), 201
 
 @invitations_bp.route('/<int:invitation_id>/reminder', methods=['POST'])
 @tenant_admin_required

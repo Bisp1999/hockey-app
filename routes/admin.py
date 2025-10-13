@@ -4,6 +4,7 @@ from flask_mail import Message
 from app import db, mail
 from models.user import User
 from models.tenant import Tenant
+from models.admin_invitation import AdminInvitation
 from utils.decorators import tenant_admin_required, tenant_required
 from utils.tenant import get_current_tenant
 import re
@@ -24,6 +25,55 @@ ASSIGNABLE_ROLES_BY_ROLE = {
     'admin': {'user', 'admin'},  # tenant admin cannot grant super_admin
     'super_admin': {'user', 'admin', 'super_admin'}
 }
+
+# ============ Admin Invitations ============
+
+@admin_bp.route('/invitations', methods=['POST'])
+@tenant_admin_required
+def invite_admin():
+    """
+    Endpoint for an admin to invite a new user (e.g., team manager) to their tenant.
+    The role of the invited user is specified in the request.
+    """
+    data = request.get_json()
+    email = data.get('email')
+    role = data.get('role', 'admin') # Default to 'admin' if not specified
+
+    # Validate role
+    assignable_roles = ASSIGNABLE_ROLES_BY_ROLE.get(current_user.role, set())
+    if role not in assignable_roles:
+        return jsonify({'error': f'You do not have permission to assign the role: {role}.'}), 403
+
+    if not email or not is_valid_email(email):
+        return jsonify({'error': 'A valid email is required.'}), 400
+
+    tenant = get_current_tenant()
+    existing_user = User.query.filter_by(email=email, tenant_id=tenant.id).first()
+    if existing_user:
+        return jsonify({'error': 'A user with this email already exists in your organization.'}), 409
+
+    existing_invitation = AdminInvitation.query.filter_by(email=email, tenant_id=tenant.id, status='pending').first()
+    if existing_invitation and existing_invitation.is_valid():
+        return jsonify({'error': 'An active invitation for this email already exists.'}), 409
+
+    invitation = AdminInvitation(
+        email=email,
+        tenant_id=tenant.id,
+        invited_by_id=current_user.id,
+        role=role
+    )
+    db.session.add(invitation)
+    db.session.commit()
+
+    try:
+        _send_admin_invitation_email(invitation, tenant)
+    except Exception as e:
+        current_app.logger.error(f"Failed to send admin invitation email to {email}: {e}")
+
+    return jsonify({
+        'message': f'Invitation for role `{role}` sent successfully to {email}.',
+        'invitation': invitation.to_dict()
+    }), 201
 
 def is_valid_email(email: str) -> bool:
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
@@ -194,6 +244,31 @@ def delete_user(user_id: int):
         return jsonify({'error': 'Failed to delete user'}), 500
 
 # ============ Helpers ============
+
+def _send_admin_invitation_email(invitation: AdminInvitation, tenant: Tenant):
+    """Send an invitation email to a new admin."""
+    try:
+        # The base URL for the frontend application
+        frontend_url = tenant.get_url().replace('http://', 'https://') 
+        if 'localhost' in frontend_url:
+            frontend_url = 'http://localhost:3000' # Adjust for local development
+        
+        accept_url = f"{frontend_url}/accept-invitation/{invitation.token}"
+        
+        msg = Message(
+            subject=f"You're invited to manage {tenant.name}",
+            recipients=[invitation.email],
+            html=f'''
+            <h2>You have been invited to join {tenant.name} as a {invitation.role}.</h2>
+            <p>{invitation.invited_by.full_name} has invited you to help manage their hockey team.</p>
+            <p>Please click the link below to create your account and accept the invitation:</p>
+            <p><a href="{accept_url}">Accept Invitation</a></p>
+            <p>This link will expire in 7 days.</p>
+            '''
+        )
+        mail.send(msg)
+    except Exception as e:
+        current_app.logger.error(f"Failed to send admin invitation email: {e}")
 
 def _send_verification_email(user: User, tenant: Tenant):
     try:
