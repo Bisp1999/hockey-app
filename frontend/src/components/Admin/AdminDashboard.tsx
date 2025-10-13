@@ -9,6 +9,7 @@ const AdminDashboard: React.FC = () => {
       <div className="admin-section">
         <h2>Invite New Manager</h2>
         <p>Invite a new team manager to help you manage your organization.</p>
+        <hr />
         <InviteManagerForm />
       </div>
       {/* Future admin sections can be added here */}
