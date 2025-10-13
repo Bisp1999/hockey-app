@@ -11,6 +11,7 @@ import InvitationDashboard from './components/Invitations/InvitationDashboard';
 import StatsDashboard from './components/Statistics/StatsDashboard';
 import AssignmentManager from './components/Assignments/AssignmentManager';
 import TeamSettings from './components/Teams/TeamSettings';
+import AdminDashboard from './components/Admin/AdminDashboard';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import PlayerProfile from './components/Players/PlayerProfile';
 import GamesContainer from './components/Games/GamesContainer';
@@ -50,6 +51,7 @@ function App() {
                 <Route path="games" element={<GamesContainer />} />
                 <Route path="games/:id" element={<GameDetails />} />
                 <Route path="teams" element={<TeamSettings />} />
+                <Route path="admin" element={<AdminDashboard />} />
               </Route>
             </Routes>
           </div>
