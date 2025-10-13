@@ -48,8 +48,9 @@ const InviteManagerForm: React.FC = () => {
             </select>
         </div>
         <button type="submit" disabled={submitting}>
-        {submitting ? 'Sending...' : 'Send Invitation'}
-      </button>
+          {submitting ? 'Sending...' : 'Send Invitation'}
+        </button>
+      </div>
       {message && <p className="success-message">{message}</p>}
       {error && <p className="error-message">{error}</p>}
     </form>
