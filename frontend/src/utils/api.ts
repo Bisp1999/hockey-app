@@ -11,21 +11,22 @@ export const apiClient = axios.create({
   withCredentials: true, // Include cookies for session management
 });
 
-// Fetch CSRF token on initialization
-let csrfToken: string | null = null;
+// CSRF logic disabled to match backend configuration
+// // Fetch CSRF token on initialization
+// let csrfToken: string | null = null;
 
-const fetchCsrfToken = async () => {
-  try {
-    const apiUrl = process.env.REACT_APP_API_URL || '/api';
-    const response = await axios.get(`${apiUrl}/auth/csrf-token`, { withCredentials: true });
-    csrfToken = response.data.csrfToken;
-  } catch (error) {
-    console.error('Failed to fetch CSRF token:', error);
-  }
-};
+// const fetchCsrfToken = async () => {
+//   try {
+//     const apiUrl = process.env.REACT_APP_API_URL || '/api';
+//     const response = await axios.get(`${apiUrl}/auth/csrf-token`, { withCredentials: true });
+//     csrfToken = response.data.csrfToken;
+//   } catch (error) {
+//     console.error('Failed to fetch CSRF token:', error);
+//   }
+// };
 
-// Initialize CSRF token
-fetchCsrfToken();
+// // Initialize CSRF token
+// fetchCsrfToken();
 
 // Request interceptor to add CSRF token and tenant header
 apiClient.interceptors.request.use(
@@ -38,15 +39,15 @@ apiClient.interceptors.request.use(
       config.headers['X-Tenant-Subdomain'] = parts[0];
     }
     
-    // Add CSRF token for unsafe methods
-    if (config.method && ['post', 'put', 'delete', 'patch'].includes(config.method.toLowerCase())) {
-      if (!csrfToken) {
-        await fetchCsrfToken();
-      }
-      if (csrfToken) {
-        config.headers['X-CSRFToken'] = csrfToken;
-      }
-    }
+    // CSRF logic disabled to match backend configuration
+    // if (config.method && ['post', 'put', 'delete', 'patch'].includes(config.method.toLowerCase())) {
+    //   if (!csrfToken) {
+    //     await fetchCsrfToken();
+    //   }
+    //   if (csrfToken) {
+    //     config.headers['X-CSRFToken'] = csrfToken;
+    //   }
+    // }
     return config;
   },
   (error) => {
@@ -60,16 +61,16 @@ apiClient.interceptors.response.use(
     return response;
   },
   async (error) => {
-    // Retry CSRF token fetch on 400 CSRF errors
-    if (error.response?.status === 400 && error.response?.data?.error?.includes('CSRF')) {
-      await fetchCsrfToken();
-      // Retry the request
-      const config = error.config;
-      if (csrfToken) {
-        config.headers['X-CSRFToken'] = csrfToken;
-      }
-      return apiClient.request(config);
-    }
+    // CSRF logic disabled to match backend configuration
+    // if (error.response?.status === 400 && error.response?.data?.error?.includes('CSRF')) {
+    //   await fetchCsrfToken();
+    //   // Retry the request
+    //   const config = error.config;
+    //   if (csrfToken) {
+    //     config.headers['X-CSRFToken'] = csrfToken;
+    //   }
+    //   return apiClient.request(config);
+    // }
     
     if (error.response?.status === 401) {
       // Redirect to login on unauthorized
