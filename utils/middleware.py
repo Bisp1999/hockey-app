@@ -92,6 +92,7 @@ class TenantMiddleware:
             '/api/auth/login',  # Add this - allow login without tenant context first
             '/api/auth/logout',  # Add this too
             '/api/onboarding/register',  # Add this line
+            '/api/onboarding/check-availability',  # Allow availability checks
         ]
         
         # Skip for static files and health checks

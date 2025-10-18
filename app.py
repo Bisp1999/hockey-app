@@ -142,7 +142,7 @@ def create_app(config_name='development'):
         return send_from_directory(base_upload_folder, filename)
     
     # Import models to ensure they are registered with SQLAlchemy
-    from models import tenant, user, player, team, game, invitation, statistics, assignment
+    from models import tenant, user, player, team, game, invitation, statistics, assignment, admin_invitation
     
     return app
 

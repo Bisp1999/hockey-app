@@ -3,7 +3,8 @@ Tenant registration and onboarding flow routes.
 """
 from flask import Blueprint, request, jsonify, current_app
 from werkzeug.security import generate_password_hash
-from app import db
+from flask_wtf.csrf import CSRFProtect
+from app import db, csrf
 from models.tenant import Tenant
 from models.user import User
 from utils.tenant import generate_tenant_slug, validate_subdomain
@@ -42,6 +43,7 @@ def validate_organization_name(name):
     return True, "Valid organization name"
 
 @onboarding_bp.route('/check-availability', methods=['POST'])
+@csrf.exempt
 def check_availability():
     """Check if subdomain and organization name are available."""
     data = request.get_json()
@@ -109,6 +111,7 @@ def check_availability():
     return jsonify(result), 200
 
 @onboarding_bp.route('/register', methods=['POST'])
+@csrf.exempt
 def register_tenant():
     """Register a new tenant with admin user."""
     data = request.get_json()
