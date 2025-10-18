@@ -141,23 +141,32 @@ const InvitationDashboard: React.FC = () => {
             onChange={(e) => setSelectedGameId(Number(e.target.value))}
           >
             <option value="">-- Select a game --</option>
-            {games.map(game => (
-              <option key={game.id} value={game.id}>
-                {new Date(game.date).toLocaleDateString()} - {game.time} - {game.venue}
-              </option>
-            ))}
+            {games.map(game => {
+              // Parse date without timezone conversion
+              const [year, month, day] = game.date.split('-').map(Number);
+              const dateStr = new Date(year, month - 1, day).toLocaleDateString();
+              return (
+                <option key={game.id} value={game.id}>
+                  {dateStr} - {game.time} - {game.venue}
+                </option>
+              );
+            })}
           </select>
         </div>
       </div>
 
       {selectedGame && (
         <div className="game-info">
-          <h2>🏒 {new Date(selectedGame.date).toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          })}</h2>
+          <h2>🏒 {(() => {
+            // Parse date without timezone conversion
+            const [year, month, day] = selectedGame.date.split('-').map(Number);
+            return new Date(year, month - 1, day).toLocaleDateString('en-US', { 
+              weekday: 'long', 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            });
+          })()}</h2>
           <p><strong>Time:</strong> {selectedGame.time}</p>
           <p><strong>Venue:</strong> {selectedGame.venue}</p>
         </div>
