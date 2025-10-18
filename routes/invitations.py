@@ -81,10 +81,11 @@ def send_game_invitations(game_id):
                     failed_count += 1
                     continue
                 
-                # Check if invitation already exists
+                # Check if invitation already exists for this tenant
                 existing = Invitation.query.filter_by(
                     game_id=game_id,
-                    player_id=player_id
+                    player_id=player_id,
+                    tenant_id=g.current_tenant_id
                 ).first()
                 
                 if existing:
