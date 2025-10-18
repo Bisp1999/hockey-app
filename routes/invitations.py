@@ -24,14 +24,33 @@ def get_game_invitations(game_id):
         # Ensure game belongs to current tenant
         game = Game.query.filter_by(id=game_id, tenant_id=g.current_tenant_id).first_or_404()
         
+        current_app.logger.info(f"Fetching invitations for game {game_id}, tenant {g.current_tenant_id}")
+        
         # Only get invitations for this tenant
         invitations = Invitation.query.filter_by(
             game_id=game_id,
             tenant_id=g.current_tenant_id
         ).all()
         
+        current_app.logger.info(f"Found {len(invitations)} invitations for game {game_id}")
+        
+        # Convert invitations to dict with error handling
+        invitation_dicts = []
+        for inv in invitations:
+            try:
+                invitation_dicts.append(inv.to_dict(include_player=True))
+            except Exception as e:
+                current_app.logger.error(f"Error converting invitation {inv.id} to dict: {e}")
+                # Include basic info even if full conversion fails
+                invitation_dicts.append({
+                    'id': inv.id,
+                    'status': inv.status,
+                    'player_id': inv.player_id,
+                    'error': 'Failed to load full details'
+                })
+        
         return jsonify({
-            'invitations': [inv.to_dict(include_player=True) for inv in invitations],
+            'invitations': invitation_dicts,
             'total': len(invitations),
             'summary': {
                 'sent': sum(1 for inv in invitations if inv.status in ['sent', 'delivered', 'opened']),
@@ -43,6 +62,8 @@ def get_game_invitations(game_id):
         }), 200
     except Exception as e:
         current_app.logger.error(f"Error fetching game invitations: {e}")
+        import traceback
+        current_app.logger.error(traceback.format_exc())
         return jsonify({'error': 'Failed to fetch invitations'}), 500
 
 @invitations_bp.route('/game/<int:game_id>/send', methods=['POST'])
