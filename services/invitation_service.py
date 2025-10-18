@@ -30,16 +30,18 @@ class InvitationService:
             if not game:
                 return {'error': 'Game not found', 'sent': 0, 'failed': 0}
             
-            # Get players to invite
+            # Get players to invite - CRITICAL: Only from same tenant
             if player_ids:
                 players = Player.query.filter(
                     Player.id.in_(player_ids),
+                    Player.tenant_id == game.tenant_id,
                     Player.is_active == True
                 ).all()
             else:
-                # Get all regular active players
+                # Get all regular active players from THIS TENANT ONLY
                 players = Player.query.filter_by(
                     player_type=player_type,
+                    tenant_id=game.tenant_id,
                     is_active=True
                 ).all()
             
@@ -49,10 +51,11 @@ class InvitationService:
             
             for player in players:
                 try:
-                    # Check if invitation already exists
+                    # Check if invitation already exists for this tenant
                     existing = Invitation.query.filter_by(
                         game_id=game_id,
-                        player_id=player.id
+                        player_id=player.id,
+                        tenant_id=game.tenant_id
                     ).first()
                     
                     if existing:
