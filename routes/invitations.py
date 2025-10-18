@@ -1,7 +1,7 @@
 """
 Invitation and availability API endpoints.
 """
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, g
 from flask_login import login_required
 from datetime import datetime, timedelta
 from app import db
@@ -21,9 +21,14 @@ invitations_bp = Blueprint('invitations', __name__)
 def get_game_invitations(game_id):
     """Get all invitations for a specific game."""
     try:
-        game = Game.query.get_or_404(game_id)
+        # Ensure game belongs to current tenant
+        game = Game.query.filter_by(id=game_id, tenant_id=g.current_tenant_id).first_or_404()
         
-        invitations = Invitation.query.filter_by(game_id=game_id).all()
+        # Only get invitations for this tenant
+        invitations = Invitation.query.filter_by(
+            game_id=game_id,
+            tenant_id=g.current_tenant_id
+        ).all()
         
         return jsonify({
             'invitations': [inv.to_dict(include_player=True) for inv in invitations],
@@ -52,7 +57,8 @@ def send_game_invitations(game_id):
         if not player_ids:
             return jsonify({'error': 'No players specified'}), 400
         
-        game = Game.query.get_or_404(game_id)
+        # Ensure game belongs to current tenant
+        game = Game.query.filter_by(id=game_id, tenant_id=g.current_tenant_id).first_or_404()
         
         sent_count = 0
         failed_count = 0
@@ -60,9 +66,13 @@ def send_game_invitations(game_id):
         
         for player_id in player_ids:
             try:
-                player = Player.query.get(player_id)
+                # CRITICAL: Only get players from current tenant
+                player = Player.query.filter_by(
+                    id=player_id,
+                    tenant_id=g.current_tenant_id
+                ).first()
                 if not player:
-                    errors.append(f"Player {player_id} not found")
+                    errors.append(f"Player {player_id} not found in your organization")
                     failed_count += 1
                     continue
                 
@@ -82,12 +92,13 @@ def send_game_invitations(game_id):
                     failed_count += 1
                     continue
                 
-                # Create invitation
+                # Create invitation with tenant_id
                 invitation = Invitation(
                     game_id=game_id,
                     player_id=player_id,
                     invitation_type=invitation_type,
-                    status='pending'
+                    status='pending',
+                    tenant_id=g.current_tenant_id
                 )
                 
                 db.session.add(invitation)
@@ -148,7 +159,11 @@ def respond_to_invitation(invitation_id):
         if response not in ['available', 'unavailable', 'tentative']:
             return jsonify({'error': 'Invalid response. Must be available, unavailable, or tentative'}), 400
         
-        invitation = Invitation.query.get_or_404(invitation_id)
+        # Ensure invitation belongs to current tenant
+        invitation = Invitation.query.filter_by(
+            id=invitation_id,
+            tenant_id=g.current_tenant_id
+        ).first_or_404()
         
         # Record response
         invitation.record_response(response, method='web', notes=notes)
@@ -274,7 +289,11 @@ def accept_admin_invitation():
 def send_reminder(invitation_id):
     """Send a reminder email for an invitation."""
     try:
-        invitation = Invitation.query.get_or_404(invitation_id)
+        # Ensure invitation belongs to current tenant
+        invitation = Invitation.query.filter_by(
+            id=invitation_id,
+            tenant_id=g.current_tenant_id
+        ).first_or_404()
         
         if invitation.response:
             return jsonify({'error': 'Player has already responded'}), 400
