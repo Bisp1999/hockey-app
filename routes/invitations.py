@@ -22,14 +22,14 @@ def get_game_invitations(game_id):
     """Get all invitations for a specific game."""
     try:
         # Ensure game belongs to current tenant
-        game = Game.query.filter_by(id=game_id, tenant_id=g.current_tenant_id).first_or_404()
+        game = Game.query.filter_by(id=game_id, tenant_id=g.tenant_id).first_or_404()
         
-        current_app.logger.info(f"Fetching invitations for game {game_id}, tenant {g.current_tenant_id}")
+        current_app.logger.info(f"Fetching invitations for game {game_id}, tenant {g.tenant_id}")
         
         # Only get invitations for this tenant
         invitations = Invitation.query.filter_by(
             game_id=game_id,
-            tenant_id=g.current_tenant_id
+            tenant_id=g.tenant_id
         ).all()
         
         current_app.logger.info(f"Found {len(invitations)} invitations for game {game_id}")
@@ -90,7 +90,7 @@ def send_game_invitations(game_id):
                 # CRITICAL: Only get players from current tenant
                 player = Player.query.filter_by(
                     id=player_id,
-                    tenant_id=g.current_tenant_id
+                    tenant_id=g.tenant_id
                 ).first()
                 if not player:
                     errors.append(f"Player {player_id} not found in your organization")
@@ -106,7 +106,7 @@ def send_game_invitations(game_id):
                 existing = Invitation.query.filter_by(
                     game_id=game_id,
                     player_id=player_id,
-                    tenant_id=g.current_tenant_id
+                    tenant_id=g.tenant_id
                 ).first()
                 
                 if existing:
@@ -120,7 +120,7 @@ def send_game_invitations(game_id):
                     player_id=player_id,
                     invitation_type=invitation_type,
                     status='pending',
-                    tenant_id=g.current_tenant_id
+                    tenant_id=g.tenant_id
                 )
                 
                 db.session.add(invitation)
@@ -184,7 +184,7 @@ def respond_to_invitation(invitation_id):
         # Ensure invitation belongs to current tenant
         invitation = Invitation.query.filter_by(
             id=invitation_id,
-            tenant_id=g.current_tenant_id
+            tenant_id=g.tenant_id
         ).first_or_404()
         
         # Record response
@@ -314,7 +314,7 @@ def send_reminder(invitation_id):
         # Ensure invitation belongs to current tenant
         invitation = Invitation.query.filter_by(
             id=invitation_id,
-            tenant_id=g.current_tenant_id
+            tenant_id=g.tenant_id
         ).first_or_404()
         
         if invitation.response:
